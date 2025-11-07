@@ -12,6 +12,14 @@ export default function RecipeEdit() {
   const [ingredients, setIngredients] = useState([]); // ✅ 추가
   const [loading, setLoading] = useState(true);
   const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [kcal, setKcal] = useState(0); 
+
+
+  // ingredients 상태 변경 감지용 useEffect
+    useEffect(() => {
+      console.log("🍳 현재 재료 상태:", ingredients);
+    }, [ingredients]);
+
 
   // ✅ 레시피 불러오기
   useEffect(() => {
@@ -21,15 +29,16 @@ export default function RecipeEdit() {
         return res.json();
       })
       .then((data) => {
-  setRecipe(data);
+        setRecipe(data);
+        setKcal(data.kcal || 0);
 
-  const initSteps = (data.steps || []).map((s, idx) => ({
-    ...s,
-    stepOrder: idx + 1,
-    stepNum: String(idx + 1).padStart(2, "0"),
-    imageFile: null,
-    imageUrl: s.imageUrl || null,
-  }));
+      const initSteps = (data.steps || []).map((s, idx) => ({
+        ...s,
+        stepOrder: idx + 1,
+        stepNum: String(idx + 1).padStart(2, "0"),
+        imageFile: null,
+        imageUrl: s.imageUrl || null,
+      }));
 
   console.log("📸 불러온 기존 썸네일 URL:", data.thumbnailImageUrl || data.thumbnailUrl);
   console.log("🍳 불러온 기존 단계 이미지 URL 목록:", initSteps.map(s => s.imageUrl));
@@ -50,18 +59,25 @@ export default function RecipeEdit() {
 
   /** ✅ 재료 관련 로직 추가 **/
   const addIngredient = () => {
-    setIngredients([...ingredients, { name: "", count: "" }]);
+    const newIngredients = [...ingredients, { name: "", count: "" }];
+    setIngredients(newIngredients);
+    console.log("➕ 재료 추가:", newIngredients);
   };
 
   const updateIngredient = (index, field, value) => {
     const newIngredients = [...ingredients];
     newIngredients[index][field] = value;
     setIngredients(newIngredients);
+    console.log(`✏️ 재료 수정(index ${index}):`, newIngredients[index]);
   };
 
+
   const deleteIngredient = (index) => {
-    setIngredients(ingredients.filter((_, i) => i !== index));
+    const newIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(newIngredients);
+    console.log(`❌ 재료 삭제(index ${index}):`, newIngredients);
   };
+
 
   /** ✅ 단계 관련 로직 **/
   const addStep = () => {
@@ -162,6 +178,7 @@ export default function RecipeEdit() {
       peopleCount: recipe.peopleCount,
       prepTime: recipe.prepTime,
       cookTime: recipe.cookTime,
+      kcal,
       steps: steps.map((step) => {
         let imageKey = null;
 
@@ -236,7 +253,7 @@ export default function RecipeEdit() {
 
       {/* 기본 정보 */}
       <div>
-        <label>인원 / 준비시간 / 조리시간</label>
+        <label>인원 / 준비시간 / 조리시간 / 칼로리(kcal)</label>
         <input
           type="number"
           value={recipe.peopleCount}
@@ -256,6 +273,12 @@ export default function RecipeEdit() {
           value={recipe.cookTime}
           onChange={(e) => setRecipe({ ...recipe, cookTime: e.target.value })}
           placeholder="조리시간"
+        />
+      <input
+          type="number"
+          value={kcal}
+          onChange={(e) => setKcal(parseInt(e.target.value) || 0)}
+          placeholder="칼로리 (kcal)"
         />
       </div>
 

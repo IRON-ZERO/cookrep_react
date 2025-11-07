@@ -9,6 +9,7 @@ const RecipeUpload = () => {
   const [peopleCount, setPeopleCount] = useState(0);
   const [prepTime, setPrepTime] = useState(0);
   const [cookTime, setCookTime] = useState(0);
+  const [kcal, setKcal] = useState(0);
   const [mainFile, setMainFile] = useState(null);
   const [steps, setSteps] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -16,6 +17,17 @@ const RecipeUpload = () => {
   // 단계 추가
   const addStep = () => {
     setSteps([...steps, { content: "", file: null }]);
+  };
+
+  // 단계 삭제 함수
+  const deleteStep = (index) => {
+    const newSteps = steps
+      .filter((_, i) => i !== index) // 선택한 단계 삭제
+      .map((step, i) => ({          // stepOrder 재정렬
+        ...step,
+        stepOrder: i + 1,
+      }));
+    setSteps(newSteps);
   };
 
   // 단계 내용 변경
@@ -28,6 +40,11 @@ const RecipeUpload = () => {
   // 재료 추가
   const addIngredient = () => {
     setIngredients([...ingredients, { name: "", count: "" }]);
+  };
+
+  // 재료 삭제 함수
+  const deleteIngredient = (index) => {
+    setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
   // 재료 변경
@@ -111,6 +128,7 @@ const RecipeUpload = () => {
         peopleCount,
         prepTime,
         cookTime,
+        kcal,
         thumbnailImageUrl: mainFile
           ? `users/${userId}/recipes/${now}/main/${mainFile.name}`
           : null,
@@ -149,7 +167,7 @@ const RecipeUpload = () => {
       >
         {/* 제목 */}
         <div>
-          <label>레시피 제목</label>
+          <label className="text-2xl font-bold">레시피 제목</label>
           <input
             type="text"
             value={title}
@@ -166,7 +184,7 @@ const RecipeUpload = () => {
 
         {/* 기본 정보 */}
         <div>
-          <label>인원 수 / 준비시간 / 조리시간</label>
+          <label>인원 수 / 준비시간 / 조리시간 / 칼로리(kcal)</label>
           <input
             type="number"
             value={peopleCount || ""}
@@ -185,6 +203,12 @@ const RecipeUpload = () => {
             onChange={(e) => setCookTime(parseInt(e.target.value) || 0)}
             placeholder="조리 시간 (분)"
           />
+           <input
+              type="number"
+              value={kcal || ""}
+              onChange={(e) => setKcal(parseInt(e.target.value) || 0)}
+              placeholder="칼로리 (kcal)"
+            />
         </div>
 
         {/* 재료 입력 */}
@@ -208,6 +232,7 @@ const RecipeUpload = () => {
                   handleIngredientChange(idx, "count", e.target.value)
                 }
               />
+              <button type="button" onClick={() => deleteIngredient(idx)}>❌</button> 
             </div>
           ))}
           <button type="button" onClick={addIngredient}>
@@ -234,6 +259,7 @@ const RecipeUpload = () => {
                   handleStepChange(idx, "file", e.target.files[0])
                 }
               />
+              <button type="button" onClick={() => deleteStep(idx)}>❌</button> 
             </div>
           ))}
           <button type="button" onClick={addStep}>
