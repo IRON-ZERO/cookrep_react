@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import "../../styles/recipe/RecipeUpload.css";
 
 const RecipeUpload = () => {
   // 임시 테스트용 userId

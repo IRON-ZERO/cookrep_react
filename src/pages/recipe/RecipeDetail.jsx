@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-// import "../../styles/recipe/RecipeDetail.css";
+
 
 export default function RecipeDetail() {
   const { recipeId } = useParams(); // URL에서 recipeId 가져오기
