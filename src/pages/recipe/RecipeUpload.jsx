@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const RecipeUpload = () => {
+  const navigate = useNavigate();
+
   // 임시 테스트용 userId
   const userId = "0c79275d-716f-4551-83ab-95265b648308";
 
@@ -149,6 +153,11 @@ const RecipeUpload = () => {
       const result = await registerResp.json();
       alert("레시피 등록 완료!");
       console.log(result);
+      if (result.recipeId) {
+        navigate(`/mypage/recipe/${result.recipeId}`);
+      } else {
+        console.warn("recipeId가 응답에 없습니다:", result);
+      }
     } catch (err) {
       console.error("레시피 등록 실패", err);
       alert("레시피 등록 중 오류가 발생했습니다.");
@@ -177,15 +186,7 @@ const RecipeUpload = () => {
           />
         </div>
 
-        {/* 메인 이미지 */}
-        {/* <div>
-          <label className="block text-lg font-semibold mb-2 text-gray-700">메인 이미지 (필수)</label>
-          <input
-            type="file"
-            onChange={(e) => setMainFile(e.target.files[0])}
-            className="w-full text-gray-700"
-          />
-        </div> */}
+      
 
 {/* 메인 이미지 */}
 <div>
