@@ -1,0 +1,9 @@
+.authMode {
+  @apply before:content-[""] before:bg-(--ck-white) before:w-[50%] before:h-full before:absolute before:left-0 before:top-0 before:transition-transform before:ease-in-out before:duration-300;
+}
+.authMode_username {
+  @apply before:translate-x-0;
+}
+.authMode_email {
+  @apply before:translate-x-full;
+}

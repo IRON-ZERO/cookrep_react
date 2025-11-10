@@ -4,6 +4,7 @@ import RecipeUpload from "./pages/recipe/RecipeUpload";
 import RecipeList from "./pages/recipe/RecipeList.jsx";
 import RecipeDetail from "./pages/recipe/RecipeDetail.jsx";
 import RecipeEdit from "./pages/recipe/RecipeEdit.jsx";
+import Login from "./pages/login/Login.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -12,20 +13,28 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/upload",
-        element: <RecipeUpload/>
+        element: <RecipeUpload />,
       },
       {
         path: "/mypage/recipes",
-        element: <RecipeList/>
+        element: <RecipeList />,
       },
       {
         path: "/mypage/recipe/:recipeId",
-        element: <RecipeDetail/>
+        element: <RecipeDetail />,
       },
       {
         path: "/mypage/recipe/edit/:recipeId",
-        element: <RecipeEdit/>
-      }
+        element: <RecipeEdit />,
+      },
     ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/join",
+    element: <Login />,
   },
 ]);
