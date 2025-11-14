@@ -5,6 +5,7 @@ import RecipeList from "./pages/recipe/RecipeList.jsx";
 import RecipeDetail from "./pages/recipe/RecipeDetail.jsx";
 import RecipeEdit from "./pages/recipe/RecipeEdit.jsx";
 import Login from "./pages/login/Login.jsx";
+import Join from "./pages/join/Join.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "/join",
-    element: <Login />,
+    element: <Join />,
   },
 ]);

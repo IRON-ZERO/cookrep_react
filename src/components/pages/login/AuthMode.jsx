@@ -1,6 +1,17 @@
-import {useContext} from "react";
-import {AuthModeContext} from "../../../contexts/auth/authModeContext";
-
+export default function AuthMode({mode, setMode}) {
+  const idMode = () => setMode(true);
+  const emailMode = () => setMode(false);
+  return (
+    <div
+      className={`relative flex border rounded-md authMode ${
+        mode ? "authMode_username" : "authMode_email"
+      } `}
+    >
+      <ModeBtn mode={mode} setMode={idMode} txt="아이디" />
+      <ModeBtn mode={!mode} setMode={emailMode} txt="이메일" />
+    </div>
+  );
+}
 function ModeBtn({mode, setMode, txt}) {
   return (
     <button
@@ -11,21 +22,5 @@ function ModeBtn({mode, setMode, txt}) {
     >
       {txt}
     </button>
-  );
-}
-
-export default function AuthMode() {
-  const {authMode, setAuthMode} = useContext(AuthModeContext);
-  const idMode = () => setAuthMode(true);
-  const emailMode = () => setAuthMode(false);
-  return (
-    <div
-      className={`relative flex border rounded-md authMode ${
-        authMode ? "authMode_username" : "authMode_email"
-      } `}
-    >
-      <ModeBtn mode={authMode} setMode={idMode} txt="아이디" />
-      <ModeBtn mode={!authMode} setMode={emailMode} txt="이메일" />
-    </div>
   );
 }

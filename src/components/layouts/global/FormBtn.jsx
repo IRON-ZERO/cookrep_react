@@ -1,6 +1,9 @@
 export default function FormBtn({onClick, text}) {
   return (
-    <button className="bg-(--ck-orange) p-2 rounded-md" onClick={onClick}>
+    <button
+      className="bg-(--ck-orange) p-2 rounded-md cursor-pointer"
+      onClick={onClick}
+    >
       {text}
     </button>
   );

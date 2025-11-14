@@ -2,6 +2,8 @@
 /* custom style */
 @import "./styles/auth/formLayout.css";
 @import "./styles/auth/authMode.css";
+@import "./styles/auth/authBgImg.css";
+
 @theme {
   --ck-white: #efefef;
   --ck-green-light: #79c368;
