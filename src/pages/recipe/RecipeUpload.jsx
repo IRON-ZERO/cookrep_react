@@ -80,7 +80,7 @@ const RecipeUpload = () => {
       });
 
       // presigned URL 요청
-      const presignResp = await fetch("/api/recipe/presigned", {
+      const presignResp = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fileNames),
@@ -139,7 +139,7 @@ const RecipeUpload = () => {
         steps: stepsData,
       };
 
-      const registerResp = await fetch(`/api/recipe/${userId}`, {
+      const registerResp = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(recipeData),

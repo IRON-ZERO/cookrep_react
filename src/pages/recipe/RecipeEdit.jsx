@@ -23,7 +23,7 @@ export default function RecipeEdit() {
 
   // ✅ 레시피 불러오기
   useEffect(() => {
-    fetch(`/api/recipe/${recipeId}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`)
       .then((res) => {
         if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
         return res.json();
@@ -139,7 +139,7 @@ export default function RecipeEdit() {
     // ✅ presigned URL 요청
     let presignData = [];
     if (fileNames.length > 0) {
-      const presignResp = await fetch("/api/recipe/presigned", {
+      const presignResp = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fileNames),
@@ -206,7 +206,7 @@ export default function RecipeEdit() {
     console.log("✅ 최종 변환된 step.imageUrl 목록:", steps.map(s => s.imageUrl));
     console.log("🧾 서버로 전송할 updateData:", updateData);
 
-    await fetch(`/api/recipe/${recipeId}`, {
+    await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updateData),

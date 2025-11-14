@@ -10,7 +10,7 @@ export default function RecipeDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/recipe/${recipeId}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`)
       .then((res) => {
         if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
         return res.json();
@@ -28,7 +28,7 @@ export default function RecipeDetail() {
   const deleteRecipe = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-    fetch(`/api/recipe/${recipeId}`, {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
       method: "DELETE",
     })
       .then((res) => {

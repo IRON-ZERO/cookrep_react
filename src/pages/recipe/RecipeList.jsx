@@ -9,7 +9,7 @@ export default function MyRecipeList() {
 
   // ✅ 레시피 목록 불러오기
   useEffect(() => {
-    fetch(`/api/recipe/user/${userId}`) // 백엔드 포트 맞춰주세요
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/user/${userId}`) // 백엔드 포트 맞춰주세요
       .then((res) => res.json())
       .then((data) => {
         setRecipes(data || []); // data 자체가 배열임
