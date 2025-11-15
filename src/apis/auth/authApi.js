@@ -1,7 +1,9 @@
+import {BASE_URL} from "../baseUrl";
+
 export const authApi = {
   // LOGIN
   login: async (data) => {
-    const response = await fetch("http://localhost:8080/api/loginByNickname", {
+    const response = await fetch(`${BASE_URL}/api/loginByNickname`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -20,7 +22,7 @@ export const authApi = {
   },
   // JOIN
   join: async (data) => {
-    const response = await fetch("http://localhost:8080/api/join", {
+    const response = await fetch(`${BASE_URL}/api/join`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -34,16 +36,29 @@ export const authApi = {
     }
     return responseData;
   },
+  // LOGOUT
+  logout: async () => {
+    const response = await fetch(`${BASE_URL}/api/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    const responseData = await response.json();
+    console.log(responseData);
+    if (!response.ok) {
+      throw new Error("로그아웃 중 오류가 발생했습니다.");
+    }
+    return responseData;
+  },
   // LOGGED IN USER
   loggedIn: async () => {
-    const response = await fetch("http://localhost:8080/api/check", {
+    const response = await fetch(`${BASE_URL}/api/check`, {
       method: "GET",
       credentials: "include",
     });
-    const data = await response.json();
+    const responseData = await response.json();
     if (!response.ok) {
       throw new Error("로그인 후 이용 가능해요.");
     }
-    return data;
+    return responseData;
   },
 };

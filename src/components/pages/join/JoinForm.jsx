@@ -3,17 +3,15 @@ import useJoinMutation from "../../../hooks/auth/useJoinMutation";
 import AuthInput from "../../layouts/auth/AuthInput";
 import {useEffect, useState} from "react";
 import FormBtn from "../../layouts/global/FormBtn";
-import {onClickAddressBtn} from "../../../utils/auth/address";
 import JoinSearchAddress from "./JoinSearchAddress";
 
 export default function JoinForm() {
   const [disable, setDisable] = useState(true);
-  const {mutate, isError} = useJoinMutation();
+  const {mutate} = useJoinMutation();
   const {
     register,
     handleSubmit,
     setValue,
-    clearErrors,
     formState: {errors},
   } = useForm({
     defaultValues: {
@@ -28,10 +26,10 @@ export default function JoinForm() {
     },
   });
   // fn
-  //   const onSubmit = (data) => mutate(data);
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const onSubmit = (data) => mutate(data);
+  // const onSubmit = (data) => {
+  //   console.log(data);
+  // };
 
   // useEffect
   useEffect(() => {
