@@ -43,7 +43,6 @@ export const authApi = {
       credentials: "include",
     });
     const responseData = await response.json();
-    console.log(responseData);
     if (!response.ok) {
       throw new Error("로그아웃 중 오류가 발생했습니다.");
     }

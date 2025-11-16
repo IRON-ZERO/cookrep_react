@@ -11,9 +11,7 @@ export default function useJoinMutation() {
       navigate("/login");
     },
     onError: (error) => {
-      if (error.message) {
-        throw new Error(error.message || "오류가 발생했습니다.");
-      }
+      throw new Error(error.message || "오류가 발생했습니다.");
     },
   });
   return {mutate, isError};

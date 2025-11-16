@@ -1,3 +1,3 @@
-export default function Conatiner({children}) {
+export default function Container({children}) {
   return <div>{children}</div>;
 }
