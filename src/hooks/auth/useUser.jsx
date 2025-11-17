@@ -12,6 +12,5 @@ export default function useUser() {
     queryFn: authApi.loggedIn,
     placeholderData: {userId: null, userName: "로딩중", userEmail: "로딩중"},
   });
-
   return {data, isPending};
 }

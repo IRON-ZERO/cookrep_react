@@ -1,9 +1,12 @@
-import {NavLink} from "react-router";
+import {Link, NavLink} from "react-router";
 
 export default function NavList() {
   return (
-    <nav>
-      <ul>
+    <nav className="flex items-center gap-5">
+      <Link to={"/"} className="w-44">
+        <img src="/images/logos/logo_3.png" alt="로고이미지" />
+      </Link>
+      <ul className="flex gap-5">
         <li>
           <NavLink
             to={"/"}

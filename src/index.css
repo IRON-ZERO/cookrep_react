@@ -22,6 +22,8 @@
 html,
 body {
   height: 100dvh;
+  background-color: var(--ck-white);
+  color: var(--ck-txt);
 }
 
 legend {
