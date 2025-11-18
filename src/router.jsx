@@ -1,4 +1,4 @@
-import {createBrowserRouter, redirect} from "react-router";
+import { createBrowserRouter, redirect } from "react-router";
 import App from "./App";
 import RecipeUpload from "./pages/recipe/RecipeUpload";
 import RecipeList from "./pages/recipe/RecipeList.jsx";
@@ -6,7 +6,14 @@ import RecipeDetail from "./pages/recipe/RecipeDetail.jsx";
 import RecipeEdit from "./pages/recipe/RecipeEdit.jsx";
 import Login from "./pages/login/Login.jsx";
 import Join from "./pages/join/Join.jsx";
-import {authApi} from "./apis/auth/authApi.js";
+import { authApi } from "./apis/auth/authApi.js";
+import UserApiTest from "./components/pages/UserAPITest.jsx";
+import Mypage from "./pages/mypage/Mypage";
+import Profile from "./pages/mypage/Profile";
+import Fridge from "./pages/mypage/Fridge";
+import Freezer from "./pages/mypage/Freezer";
+import Scrap from "./pages/mypage/Scrap";
+import MyRecipes from "./pages/mypage/MyRecipes";
 
 const checkAuth = async () => {
   try {
@@ -62,5 +69,35 @@ export const router = createBrowserRouter([
     path: "/join",
     element: <Join />,
     loader: guestOnlyLoader,
+  },
+  {
+    path: "/mypage",
+    element: <Mypage />,
+    children: [
+      {
+        index: true,
+        element: <Profile />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
+        path: "fridge",
+        element: <Fridge />,
+      },
+      {
+        path: "freezer",
+        element: <Freezer />,
+      },
+      {
+        path: "scrap",
+        element: <Scrap />,
+      },
+      {
+        path: "recipes",
+        element: <MyRecipes />,
+      },
+    ],
   },
 ]);
