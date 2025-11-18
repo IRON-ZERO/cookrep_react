@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import useUser from "../../hooks/auth/useUser";
 
 export default function RecipeEdit() {
   const { recipeId } = useParams();
   const navigate = useNavigate();
-  const userId = "0c79275d-716f-4551-83ab-95265b648308"; // 임시 테스트용 userId
+  const { data: userData } = useUser();
+  const userId = userData.userId;
+  // const userId = "0c79275d-716f-4551-83ab-95265b648308"; // 임시 테스트용 userId
 
   const [recipe, setRecipe] = useState(null);
   const [steps, setSteps] = useState([]);
-  const [ingredients, setIngredients] = useState([]); // ✅ 추가
+  const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [thumbnailFile, setThumbnailFile] = useState(null);
-  const [kcal, setKcal] = useState(0); 
-
+  const [kcal, setKcal] = useState(0);
 
   // ingredients 상태 변경 감지용 useEffect
-    useEffect(() => {
-      console.log("🍳 현재 재료 상태:", ingredients);
-    }, [ingredients]);
-
-
-  // ✅ 레시피 불러오기
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`,{credentials: "include",})
+    // console.log("🍳 현재 재료 상태:", ingredients);
+  }, [ingredients]);
+
+  // 레시피 불러오기
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+      credentials: "include",
+    })
       .then((res) => {
         if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
         return res.json();
@@ -32,54 +34,63 @@ export default function RecipeEdit() {
         setRecipe(data);
         setKcal(data.kcal || 0);
 
-      const initSteps = (data.steps || []).map((s, idx) => ({
-        ...s,
-        stepOrder: idx + 1,
-        stepNum: String(idx + 1).padStart(2, "0"),
-        imageFile: null,
-        imageUrl: s.imageUrl || null,
-      }));
+        const initSteps = (data.steps || []).map((s, idx) => ({
+          ...s,
+          stepOrder: idx + 1,
+          stepNum: String(idx + 1).padStart(2, "0"),
+          imageFile: null,
+          imageUrl: s.imageUrl || null,
+        }));
 
-  // console.log("📸 불러온 기존 썸네일 URL:", data.thumbnailImageUrl || data.thumbnailUrl);
-  // console.log("🍳 불러온 기존 단계 이미지 URL 목록:", initSteps.map(s => s.imageUrl));
-
-  setSteps(initSteps);
-  setIngredients(data.ingredients || []);
-  setLoading(false);
-})
-
+        setSteps(initSteps);
+        setIngredients(data.ingredients || []);
+        setLoading(false);
+      })
       .catch((err) => {
         console.error(err);
         setLoading(false);
       });
   }, [recipeId]);
 
+  // 🔹 대표 이미지 미리보기 cleanup
+  useEffect(() => {
+    if (!thumbnailFile) return;
+    const previewUrl = URL.createObjectURL(thumbnailFile);
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [thumbnailFile]);
+
+  // 🔹 단계 이미지 미리보기 cleanup
+  useEffect(() => {
+    const urlsToRevoke = steps
+      .filter((step) => step.imageFile)
+      .map((step) => URL.createObjectURL(step.imageFile));
+    return () => {
+      urlsToRevoke.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [steps]);
+
   if (loading) return <p>로딩 중...</p>;
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
 
-  /** ✅ 재료 관련 로직 추가 **/
+  /** 재료 관련 로직 **/
   const addIngredient = () => {
-    const newIngredients = [...ingredients, { name: "", count: "" }];
-    setIngredients(newIngredients);
-    console.log("➕ 재료 추가:", newIngredients);
+    setIngredients([...ingredients, { name: "", count: "" }]);
   };
 
   const updateIngredient = (index, field, value) => {
     const newIngredients = [...ingredients];
     newIngredients[index][field] = value;
     setIngredients(newIngredients);
-    console.log(`✏️ 재료 수정(index ${index}):`, newIngredients[index]);
   };
-
 
   const deleteIngredient = (index) => {
     const newIngredients = ingredients.filter((_, i) => i !== index);
     setIngredients(newIngredients);
-    console.log(`❌ 재료 삭제(index ${index}):`, newIngredients);
   };
 
-
-  /** ✅ 단계 관련 로직 **/
+  /** 단계 관련 로직 **/
   const addStep = () => {
     const newStep = {
       stepOrder: steps.length + 1,
@@ -115,115 +126,110 @@ export default function RecipeEdit() {
     setSteps(newSteps);
   };
 
-  /** ✅ 수정 제출 **/
+  /** 수정 제출 **/
   const submitEditRecipe = async () => {
-  try {
-    const now = recipeId; // 수정 시 recipeId 사용
-    const fileNames = [];
+    try {
+      const now = recipeId;
+      const fileNames = [];
 
-    // ✅ 대표 이미지 업로드 준비
-    if (thumbnailFile) {
-      // 파일명 인코딩
-      const mainPath = `users/${userId}/recipes/${now}/main/${encodeURIComponent(thumbnailFile.name)}`;
-      fileNames.push(mainPath);
-    }
-
-    // ✅ 단계 이미지 업로드 준비
-    steps.forEach((step) => {
-      if (step.imageFile) {
-        const path = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(step.imageFile.name)}`;
-        fileNames.push(path);
+      if (thumbnailFile) {
+        const mainPath = `users/${userId}/recipes/${now}/main/${encodeURIComponent(
+          thumbnailFile.name
+        )}`;
+        fileNames.push(mainPath);
       }
-    });
 
-    // ✅ presigned URL 요청
-    let presignData = [];
-    if (fileNames.length > 0) {
-      const presignResp = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`, {
-        method: "POST",
+      steps.forEach((step) => {
+        if (step.imageFile) {
+          const path = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(
+            step.imageFile.name
+          )}`;
+          fileNames.push(path);
+        }
+      });
+
+      let presignData = [];
+      if (fileNames.length > 0) {
+        const presignResp = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(fileNames),
+          }
+        );
+        if (!presignResp.ok) throw new Error("Presigned URL 요청 실패");
+        presignData = await presignResp.json();
+
+        if (thumbnailFile) {
+          const mainUrlObj = presignData.find((u) => u.fileName.includes("main"));
+          if (mainUrlObj)
+            await fetch(mainUrlObj.uploadUrl, { method: "PUT", body: thumbnailFile });
+        }
+
+        for (let step of steps) {
+          if (step.imageFile) {
+            const path = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(
+              step.imageFile.name
+            )}`;
+            const urlObj = presignData.find((u) => u.fileName === path);
+            if (urlObj) await fetch(urlObj.uploadUrl, { method: "PUT", body: step.imageFile });
+          }
+        }
+      }
+
+      const updateData = {
+        title: recipe.title,
+        thumbnailImageUrl: thumbnailFile
+          ? `users/${userId}/recipes/${now}/main/${encodeURIComponent(thumbnailFile.name)}`
+          : (() => {
+              if (!recipe.thumbnailImageUrl) return null;
+              const match = recipe.thumbnailImageUrl.match(/users\/.*$/);
+              return match ? decodeURIComponent(match[0].split("?")[0]) : recipe.thumbnailImageUrl;
+            })(),
+        peopleCount: recipe.peopleCount,
+        prepTime: recipe.prepTime,
+        cookTime: recipe.cookTime,
+        kcal,
+        steps: steps.map((step) => {
+          let imageKey = null;
+          if (step.imageFile) {
+            imageKey = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(
+              step.imageFile.name
+            )}`;
+          } else if (step.imageUrl) {
+            const match = step.imageUrl.match(/users\/.*$/);
+            imageKey = match ? decodeURIComponent(match[0].split("?")[0]) : step.imageUrl;
+          }
+          return {
+            stepOrder: step.stepOrder,
+            contents: step.contents || "",
+            imageUrl: imageKey,
+          };
+        }),
+        ingredients: ingredients.map((ing) => ({
+          name: ing.name,
+          count: ing.count,
+        })),
+      };
+
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+        method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fileNames),
+        body: JSON.stringify(updateData),
       });
-      if (!presignResp.ok) throw new Error("Presigned URL 요청 실패");
-      presignData = await presignResp.json();
 
-      // ✅ 대표 이미지 업로드
-      if (thumbnailFile) {
-        const mainUrlObj = presignData.find((u) => u.fileName.includes("main"));
-        if (mainUrlObj)
-          await fetch(mainUrlObj.uploadUrl, { method: "PUT", body: thumbnailFile });
-      }
-
-      // ✅ 단계 이미지 업로드
-      for (let step of steps) {
-        if (step.imageFile) {
-          const path = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(step.imageFile.name)}`;
-          const urlObj = presignData.find((u) => u.fileName === path);
-          if (urlObj)
-            await fetch(urlObj.uploadUrl, { method: "PUT", body: step.imageFile });
-        }
-      }
+      alert("레시피 수정 완료!");
+      navigate(`/mypage/recipe/${recipeId}`);
+    } catch (err) {
+      console.error(err);
+      alert("레시피 수정 실패");
     }
+  };
 
-    // ✅ updateData 생성
-    const updateData = {
-      title: recipe.title,
-      thumbnailImageUrl: thumbnailFile
-        ? `users/${userId}/recipes/${now}/main/${encodeURIComponent(thumbnailFile.name)}`
-        : (() => {
-            if (!recipe.thumbnailImageUrl) return null;
-            const match = recipe.thumbnailImageUrl.match(/users\/.*$/);
-            return match ? decodeURIComponent(match[0].split("?")[0]) : recipe.thumbnailImageUrl;
-          })(),
-      peopleCount: recipe.peopleCount,
-      prepTime: recipe.prepTime,
-      cookTime: recipe.cookTime,
-      kcal,
-      steps: steps.map((step) => {
-        let imageKey = null;
-
-        if (step.imageFile) {
-          // 새 파일 업로드한 경우
-          imageKey = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(step.imageFile.name)}`;
-        } else if (step.imageUrl) {
-          // 기존 URL에서 S3 Key 추출
-          const match = step.imageUrl.match(/users\/.*$/);
-          imageKey = match ? decodeURIComponent(match[0].split("?")[0]) : step.imageUrl;
-        }
-
-        return {
-          stepOrder: step.stepOrder,
-          contents: step.contents || "",
-          imageUrl: imageKey,
-        };
-      }),
-      ingredients: ingredients.map((ing) => ({
-        name: ing.name,
-        count: ing.count,
-      })),
-    };
-
-    console.log("✅ 최종 변환된 step.imageUrl 목록:", steps.map(s => s.imageUrl));
-    console.log("🧾 서버로 전송할 updateData:", updateData);
-
-    await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updateData),
-    });
-
-    alert("레시피 수정 완료!");
-    navigate(`/mypage/recipe/${recipeId}`);
-  } catch (err) {
-    console.error(err);
-    alert("레시피 수정 실패");
-  }
-};
-
-
- return (
+  return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-2xl mt-8">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">🍽 레시피 수정</h2>
 
@@ -240,34 +246,23 @@ export default function RecipeEdit() {
 
       {/* 대표 이미지 */}
       <div className="mb-6">
-  <label className="block text-lg font-semibold mb-2 text-gray-700">
-    대표 이미지
-  </label>
-
-  <div className="flex items-center gap-6">
-    {/* 미리보기 이미지 */}
-    <img
-      src={
-        thumbnailFile
-          ? URL.createObjectURL(thumbnailFile)
-          : recipe.thumbnailImageUrl || recipe.thumbnailUrl
-      }
-      alt="thumbnail"
-      className="w-40 h-40 object-cover rounded-lg border border-gray-300 shadow-sm"
-    />
-
-    {/* 파일 업로드 버튼 */}
-    <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
-      이미지 변경
-      <input
-        type="file"
-        onChange={(e) => setThumbnailFile(e.target.files[0])}
-        className="hidden"
-      />
-    </label>
-  </div>
-</div>
-
+        <label className="block text-lg font-semibold mb-2 text-gray-700">대표 이미지</label>
+        <div className="flex items-center gap-6">
+          <img
+            src={thumbnailFile ? URL.createObjectURL(thumbnailFile) : recipe.thumbnailImageUrl || recipe.thumbnailUrl}
+            alt="thumbnail"
+            className="w-40 h-40 object-cover rounded-lg border border-gray-300 shadow-sm"
+          />
+          <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
+            이미지 변경
+            <input
+              type="file"
+              onChange={(e) => setThumbnailFile(e.target.files[0])}
+              className="hidden"
+            />
+          </label>
+        </div>
+      </div>
 
       {/* 기본 정보 */}
       <div className="mb-8">
@@ -306,7 +301,7 @@ export default function RecipeEdit() {
         </div>
       </div>
 
-      {/* 재료 섹션 */}
+      {/* 재료 */}
       <div className="mb-8">
         <h3 className="text-xl font-semibold mb-3 text-gray-700">🧂 사용된 재료</h3>
         {ingredients.map((ing, idx) => (
@@ -343,62 +338,53 @@ export default function RecipeEdit() {
 
       {/* 조리 단계 */}
       <div className="mb-8">
-  <h3 className="text-xl font-semibold mb-4 text-gray-700">🍳 조리 단계</h3>
+        <h3 className="text-xl font-semibold mb-4 text-gray-700">🍳 조리 단계</h3>
 
-  {steps.map((step, idx) => (
-    <div
-      key={idx}
-      className="border border-gray-200 p-4 rounded-lg mb-4 bg-gray-50 shadow-sm"
-    >
-      <h4 className="font-semibold text-gray-700 mb-2">Step {step.stepNum}</h4>
-
-      {/* 조리 내용 입력 */}
-      <textarea
-        value={step.contents}
-        onChange={(e) => updateStepContent(idx, e.target.value)}
-        placeholder="조리 내용을 입력하세요"
-        className="w-full border border-gray-300 rounded-lg p-2 mb-3 focus:ring-2 focus:ring-orange-400"
-      />
-
-      {/* 기존 이미지 미리보기 */}
-      {step.imageUrl && (
-        <img
-          src={step.imageFile ? URL.createObjectURL(step.imageFile) : step.imageUrl}
-          alt={`Step ${step.stepNum}`}
-          className="w-36 h-36 object-cover rounded-lg mb-3 border border-gray-300 shadow-sm"
-        />
-      )}
-
-      <div className="flex items-center gap-3">
-        {/* 숨겨진 파일 입력 */}
-        <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
-          이미지 변경
-          <input
-            type="file"
-            onChange={(e) => updateStepImage(idx, e.target.files[0])}
-            className="hidden"
-          />
-        </label>
+        {steps.map((step, idx) => (
+          <div
+            key={idx}
+            className="border border-gray-200 p-4 rounded-lg mb-4 bg-gray-50 shadow-sm"
+          >
+            <h4 className="font-semibold text-gray-700 mb-2">Step {step.stepNum}</h4>
+            <textarea
+              value={step.contents}
+              onChange={(e) => updateStepContent(idx, e.target.value)}
+              placeholder="조리 내용을 입력하세요"
+              className="w-full border border-gray-300 rounded-lg p-2 mb-3 focus:ring-2 focus:ring-orange-400"
+            />
+            {step.imageUrl && (
+              <img
+                src={step.imageFile ? URL.createObjectURL(step.imageFile) : step.imageUrl}
+                alt={`Step ${step.stepNum}`}
+                className="w-36 h-36 object-cover rounded-lg mb-3 border border-gray-300 shadow-sm"
+              />
+            )}
+            <div className="flex items-center gap-3">
+              <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
+                이미지 변경
+                <input
+                  type="file"
+                  onChange={(e) => updateStepImage(idx, e.target.files[0])}
+                  className="hidden"
+                />
+              </label>
+              <button
+                onClick={() => deleteStep(idx)}
+                className="text-red-500 hover:text-red-700 text-lg"
+              >
+                ❌ 단계 삭제
+              </button>
+            </div>
+          </div>
+        ))}
 
         <button
-          onClick={() => deleteStep(idx)}
-          className="text-red-500 hover:text-red-700 text-lg"
+          onClick={addStep}
+          className="bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition shadow-sm font-medium"
         >
-          ❌ 단계 삭제
+          + 단계 추가
         </button>
       </div>
-    </div>
-  ))}
-
-  {/* 단계 추가 버튼 */}
-  <button
-    onClick={addStep}
-    className="bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition shadow-sm font-medium"
-  >
-    + 단계 추가
-  </button>
-</div>
-
 
       {/* 제출 버튼 */}
       <div className="flex justify-center mt-8">
