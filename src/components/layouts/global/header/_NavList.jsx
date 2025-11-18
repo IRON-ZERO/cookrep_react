@@ -3,15 +3,19 @@ import {Link, NavLink} from "react-router";
 export default function NavList() {
   return (
     <nav className="flex items-center gap-5">
-      <Link to={"/"} className="w-44">
-        <img src="/images/logos/logo_3.png" alt="로고이미지" />
+      <Link to={"/"} className="w-32">
+        <img
+          src="/images/logos/logo_3.png"
+          alt="로고이미지"
+          className="wiggle"
+        />
       </Link>
       <ul className="flex gap-5">
         <li>
           <NavLink
             to={"/"}
             className={({isActive}) =>
-              isActive ? "text-(--ck-orange)" : "text-(--ck-black)"
+              `${isActive ? "text-(--ck-orange)" : "text-(--ck-black)"}`
             }
           >
             Home
@@ -21,7 +25,7 @@ export default function NavList() {
           <NavLink
             to={"/search"}
             className={({isActive}) =>
-              isActive ? "text-(--ck-orange)" : "text-(--ck-black)"
+              `${isActive ? "text-(--ck-orange)" : "text-(--ck-black)"}`
             }
           >
             Search
