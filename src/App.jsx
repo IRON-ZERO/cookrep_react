@@ -1,14 +1,13 @@
 import {Outlet} from "react-router-dom";
-import Main from "./pages/Main";
 import HeaderNav from "./components/layouts/global/header/HeaderNav";
+import FooterCont from "./components/layouts/global/footer/FooterCont";
 
 function App() {
   return (
-    <div>
+    <div className="h-full">
       <HeaderNav />
-      <h1>app</h1>
-      <Main />
       <Outlet />
+      <FooterCont />
     </div>
   );
 }

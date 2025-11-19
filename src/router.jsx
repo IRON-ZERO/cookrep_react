@@ -7,6 +7,7 @@ import RecipeEdit from "./pages/recipe/RecipeEdit.jsx";
 import Login from "./pages/login/Login.jsx";
 import Join from "./pages/join/Join.jsx";
 import {authApi} from "./apis/auth/authApi.js";
+import Main from "./pages/Main.jsx";
 
 const checkAuth = async () => {
   try {
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
+      {path: "/", element: <Main />},
       {
         path: "/upload",
         element: <RecipeUpload />,
