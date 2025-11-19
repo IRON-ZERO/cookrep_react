@@ -14,11 +14,16 @@ export default function Mypage() {
   if (error) return <div>유저 정보를 불러오는데 실패했습니다.</div>;
   if (!user) return <div>유저 정보가 없습니다.</div>;
   return (
+    <div className="flex flex-col">
     <div className="flex">
       <MypageSidebar user={user} />
       <div className="flex-1 p-10">
         <Outlet context={{ user }} />
       </div>
+    </div>
+    <div>
+      {footer()}
+    </div>
     </div>
   );
 }
