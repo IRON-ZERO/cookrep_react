@@ -15,6 +15,7 @@ export default function MypageSidebar({ user }) {
       <div className="text-center mb-10">
         <img
           src="/images/icons/user-icon-1.png"
+          alt={user?.nickname ? `${user.nickname}의 프로필 사진` : "프로필 사진"}
           className="w-20 h-20 rounded-full border-2 border-gray-200 mx-auto mb-2"
         />
         <h3 className="font-bold text-lg">{user?.nickname}</h3>
@@ -77,7 +78,7 @@ function SidebarItem({ to, icon, label }) {
         transition-all text-gray-800
         ${
           isActive ||
-          (to == "/mypage/profile" && location.pathname == "/mypage")
+          (to === "/mypage/profile" && location.pathname === "/mypage")
             ? "bg-gray-200 font-semibold"
             : "bg-gray-300"
         }
@@ -85,7 +86,7 @@ function SidebarItem({ to, icon, label }) {
       `
       }
     >
-      <img src={icon} className="w-5 h-5" />
+      <img src={icon} alt="" aria-hidden="true" className="w-5 h-5" />
       <span>{label}</span>
     </NavLink>
   );

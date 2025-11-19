@@ -29,7 +29,6 @@ export async function withDraw() {
     credentials: "include",
     method: "DELETE",
   });
-  console.log(response);
   if (!response.ok) throw new Error("계정 삭제를 실패했습니다.");
 }
 
@@ -82,7 +81,7 @@ export async function addUserScrappedRecipes(recipeId) {
   if (!response.ok) throw new Error("레시피 스크랩을 실패했습니다.");
 }
 // 유저 레시피 스크랩 취소
-export async function cancleUserScrappedRecipe(recipeId) {
+export async function cancelUserScrappedRecipe(recipeId) {
   const response = await fetch(`${BASE_URL}/api/users/me/scraps/${recipeId}`, {
     credentials: "include",
     method: "DELETE",
