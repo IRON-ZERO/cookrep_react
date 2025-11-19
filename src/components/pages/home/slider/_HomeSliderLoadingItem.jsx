@@ -15,7 +15,7 @@ export default function HomeSliderLoadingItem() {
       </div>
       {/* 제목 */}
       <div className="relative w-96 h-12 *:bg-slate-400 *:rounded-md">
-        <div className="absolute w-96 h-12  animate-bounce" />
+        <div className="absolute w-96 h-12 animate-bounce" />
         <div className="absolute w-96 h-12" />
       </div>
     </>

@@ -1,5 +1,4 @@
 import {Outlet} from "react-router-dom";
-import Main from "./pages/Main";
 import HeaderNav from "./components/layouts/global/header/HeaderNav";
 import FooterCont from "./components/layouts/global/footer/FooterCont";
 

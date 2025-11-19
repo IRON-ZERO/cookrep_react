@@ -8,8 +8,8 @@ import {openApi} from "../../apis/openApi/openApi";
  */
 export default function useOpenApiRecipeListQuery({start, end}) {
   const {data, isPending, isError, isSuccess} = useQuery({
-    queryKey: ["openAPIRecieListDesc"],
-    queryFn: () => openApi.getOpenAPIRecieListDesc({start, end}),
+    queryKey: ["openAPIRecipeListDesc"],
+    queryFn: () => openApi.getOpenAPIRecipeListDesc({start, end}),
   });
   return {data, isPending, isError, isSuccess};
 }

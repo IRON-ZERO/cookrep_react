@@ -4,7 +4,7 @@ import HomeSliderLoadingItem from "./_HomeSliderLoadingItem";
 
 /**
  * @param {OpenAPIResult} data
- * @param {int} index
+ * @param {number} index
  * @returns {React.ReactNode}
  */
 export default function HomeSlider({data, index}) {
@@ -20,7 +20,7 @@ export default function HomeSlider({data, index}) {
       <h3 className="absolute text-4xl font-bold z-50 bottom-6 right-6 text-(--ck-white)">
         {data.RCP_NM}
       </h3>
-      {data ? (
+      {data.ATT_FILE_NO_MK ? (
         <img
           src={data.ATT_FILE_NO_MK}
           alt={data.RCP_NM}

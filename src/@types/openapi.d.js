@@ -1,9 +1,9 @@
 /**
  * @typedef {Object} OpenAPIResult
- * @property {String} ATT_FILE_NO_MAIN 이미지경로 (소)
- * @property {String} ATT_FILE_NO_MK 이미지경로 (대)
- * @property {String} HASH_TAG 해쉬태그
- * @property {String} INFO_CAR 탄수화물
+ * @property {string} ATT_FILE_NO_MAIN 이미지경로 (소)
+ * @property {string} ATT_FILE_NO_MK 이미지경로 (대)
+ * @property {string} HASH_TAG 해쉬태그
+ * @property {string} INFO_CAR 탄수화물
  * @property {string} INFO_ENG 열량
  * @property {string} INFO_FAT 지방
  * @property {string} INFO_NA 나트륨

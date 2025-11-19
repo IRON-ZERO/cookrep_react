@@ -5,7 +5,7 @@ export default function FooterCont() {
   return (
     <footer className="flex flex-col p-10 gap-5 bg-(--ck-subTxt-dark) text-(--ck-white)">
       <div className="flex gap-10 items-center">
-        <Link href="/" className="w-44">
+        <Link to="/" className="w-44">
           <img src="/images/logos/logo_3.png" alt="로고이미지" />
         </Link>
         <div>

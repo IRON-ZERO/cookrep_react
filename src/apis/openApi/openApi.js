@@ -17,7 +17,7 @@ export const openApi = {
     }
     return data;
   },
-  getOpenAPIRecieListDesc: async ({start, end}) => {
+  getOpenAPIRecipeListDesc: async ({start, end}) => {
     const response = await fetch(
       `${BASE_URL}/api/open/getApiRecipeDesc/${start}/${end}`,
       {
