@@ -7,7 +7,6 @@ import RecipeEdit from "./pages/recipe/RecipeEdit.jsx";
 import Login from "./pages/login/Login.jsx";
 import Join from "./pages/join/Join.jsx";
 import { authApi } from "./apis/auth/authApi.js";
-import UserApiTest from "./components/pages/UserAPITest.jsx";
 import Mypage from "./pages/mypage/Mypage";
 import Profile from "./pages/mypage/Profile";
 import Fridge from "./pages/mypage/Fridge";
@@ -42,6 +41,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
+      { path: "/", element: <Main /> },
       {
         path: "/upload",
         element: <RecipeUpload />,

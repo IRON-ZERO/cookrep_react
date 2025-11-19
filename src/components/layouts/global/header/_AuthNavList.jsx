@@ -7,11 +7,16 @@ export default function AuthNavList() {
   const { mutate } = useLogoutMutation();
   return (
     <nav>
-      <ul>
+      <ul className="flex items-center gap-5">
         {data ? (
           <>
             <li>
-              <Link to={"/mypage"}>내정보</Link>
+              <Link
+                to={"/mypage"}
+                className="size-10 overflow-hidden block rounded-full"
+              >
+                <img src="/images/icons/user-color.png" alt="아바타이미지" />
+              </Link>
             </li>
             <li>
               <button className="cursor-pointer" onClick={() => mutate()}>
