@@ -3,7 +3,7 @@ import { Bookmark } from "../../global/icons/BookMark";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addUserScrappedRecipes,
-  cancleUserScrappedRecipe,
+  cancelUserScrappedRecipe,
 } from "../../../../apis/user/userApi";
 
 export default function RecommendedRecipeCard({
