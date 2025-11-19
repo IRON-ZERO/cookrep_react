@@ -19,7 +19,7 @@ export const openApi = {
   },
   getOpenAPIRecipeListDesc: async ({start, end}) => {
     const response = await fetch(
-      `${BASE_URL}/api/open/getApiRecipeDesc/${start}/${end}`,
+      `${BASE_URL}/api/open/getApiRecipeSortDesc/${start}/${end}`,
       {
         method: "GET",
         credentials: "include",
