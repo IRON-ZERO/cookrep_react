@@ -50,23 +50,34 @@ export default function RecipeDetail() {
       });
   };
 
-  const handleLike = () => {
-  fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/like`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ recipeId, userId: recipe.userId }), // userId는 로그인 사용자 정보에 따라 변경 필요
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("좋아요 응답:", data);
-      setRecipe((prev) => ({
-        ...prev,
-        like: data.likeCount
-      }));
-    })
-    .catch(err => console.error("좋아요 실패:", err));
+const handleLike = async () => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/recipe/like/${recipeId}`, // recipeId 포함
+      {
+        method: "POST",
+        credentials: "include", // 세션 쿠키 포함
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text(); // JSON이 아닌 경우 처리
+      console.error("좋아요 실패:", res.status, text);
+      return;
+    }
+
+    const data = await res.json();
+    console.log("좋아요 성공:", data);
+
+    setRecipe((prev) => ({
+      ...prev,
+      like: data.likeCount, // 백엔드에서 내려주는 좋아요 수
+    }));
+  } catch (err) {
+    console.error("좋아요 실패:", err);
+  }
 };
+
 
 
   if (loading) return <p>로딩 중...</p>;
