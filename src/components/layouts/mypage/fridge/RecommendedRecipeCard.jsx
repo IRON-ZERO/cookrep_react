@@ -38,7 +38,7 @@ export default function RecommendedRecipeCard({
       className="block relative border border-[#9d9d9d] rounded-lg shadow overflow-hidden"
     >
       <img
-        src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=710&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src={recipe.thumbnailImageUrl}
         alt={recipe.title}
         className="h-36 w-full object-cover brightness-50 hover:brightness-100 transition-all duration-300 ease-in-out scale-100 hover:scale-105"
       />

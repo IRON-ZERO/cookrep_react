@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUserDetail } from "../../apis/user/userApi";
 import MypageSidebar from "../../components/layouts/mypage/MypageSidebar";
+import footer from "../../components/layouts/global/footer/FooterCont";
 
 export default function Mypage() {
   const { data: user, isLoading, error } = useQuery({

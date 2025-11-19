@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import CommentSection from "../../components/comment/Comment";
+import Comment from "../../components/comment/Comment";
 
 export default function RecipeDetail() {
   const { recipeId } = useParams();
@@ -19,7 +19,6 @@ export default function RecipeDetail() {
         return res.json();
       })
       .then((data) => {
-        console.log("백엔드 응답 데이터:", data); // 응답 확인
         setRecipe(data);
         setIsOwner(data.owner); // 백엔드에서 내려준 작성자 여부
         setLoading(false);
@@ -50,6 +49,25 @@ export default function RecipeDetail() {
         alert("삭제 중 오류 발생");
       });
   };
+
+  const handleLike = () => {
+  fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/like`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ recipeId, userId: recipe.userId }), // userId는 로그인 사용자 정보에 따라 변경 필요
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("좋아요 응답:", data);
+      setRecipe((prev) => ({
+        ...prev,
+        like: data.likeCount
+      }));
+    })
+    .catch(err => console.error("좋아요 실패:", err));
+};
+
 
   if (loading) return <p>로딩 중...</p>;
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
@@ -169,16 +187,16 @@ export default function RecipeDetail() {
       </div>
 
       {/* 좋아요 버튼 */}
-      {/* <div className="flex justify-end mt-6">
+      <div className="flex justify-end mt-6">
         <button
           onClick={handleLike}
           className="flex items-center gap-2 text-red-500 hover:text-red-600 transition text-xl"
         >
           ❤️ <span className="text-lg font-semibold">{recipe.like}</span>
         </button>
-      </div> */}
+      </div>
 
-      <CommentSection recipeId={recipeId} />
+      <Comment recipeId={recipeId} />
     </div>
     
   );

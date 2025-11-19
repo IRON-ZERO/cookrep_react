@@ -9,25 +9,46 @@ export default function Comment({ recipeId }) {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${recipeId}`, {
       credentials: "include",
     })
-      .then((res) => res.json())
-      .then((data) => setComments(data))
-      .catch((err) => console.error("댓글 불러오기 오류:", err));
-  }, [recipeId]);
+      .then((res) => {
+        if (!res.ok) {
+            throw new Error("댓글을 불러오지 못했습니다.");
+        }
+        return res.json();
+        })
+        .then((data) => setComments(data))
+        .catch((err) => {
+        console.error("댓글 불러오기 오류:", err);
+        // 선택적으로 에러 상태를 UI에 표시
+        });
+    }, [recipeId]);
 
   // 댓글 작성
   const writeComment = () => {
+    if (!newComment.trim()) {
+    alert("댓글 내용을 입력해주세요.");
+    return;
+    }
+
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ recipeId, content: newComment }),
     })
-      .then((res) => res.json())
-      .then((saved) => {
-        setComments((prev) => [...prev, saved]);
-        setNewComment("");
-      })
-      .catch((err) => console.error("댓글 작성 오류:", err));
+      .then((res) => {
+    if (!res.ok) {
+        throw new Error("댓글 작성에 실패했습니다.");
+    }
+    return res.json();
+    })
+    .then((saved) => {
+    setComments((prev) => [...prev, saved]);
+    setNewComment("");
+    })
+    .catch((err) => {
+    console.error("댓글 작성 오류:", err);
+    alert("댓글 작성 중 오류가 발생했습니다.");
+    });
   };
 
   // 댓글 삭제
@@ -39,10 +60,17 @@ export default function Comment({ recipeId }) {
       credentials: "include",
     })
       .then((res) => {
-        if (res.ok)
+                if (res.ok) {
           setComments((prev) => prev.filter((c) => c.commentId !== commentId));
+          alert("댓글이 삭제되었습니다.");
+        } else {
+          alert("댓글 삭제에 실패했습니다.");
+        }
       })
-      .catch((err) => console.error("댓글 삭제 오류:", err));
+      .catch((err) => {
+        console.error("댓글 삭제 오류:", err);
+        alert("댓글 삭제 중 오류가 발생했습니다.");
+      });
   };
 
   return (
