@@ -13,6 +13,7 @@ import Fridge from "./pages/mypage/Fridge";
 import Freezer from "./pages/mypage/Freezer";
 import Scrap from "./pages/mypage/Scrap";
 import MyRecipes from "./pages/mypage/MyRecipes";
+import Main from './pages/Main';
 
 const checkAuth = async () => {
   try {
