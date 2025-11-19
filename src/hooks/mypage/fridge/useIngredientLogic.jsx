@@ -26,7 +26,7 @@ export function useIngredientLogic(activeIds, setActiveIds, setActiveNames) {
   const deleteMutation = useMutation({
     mutationFn: deleteUserIngredients,
     onSuccess: () => {
-      queryClient.invalidateQueries(["userIngredients"]);
+      queryClient.invalidateQueries({ queryKey: ["userIngredients"] });
     },
   });
 
@@ -43,8 +43,15 @@ export function useIngredientLogic(activeIds, setActiveIds, setActiveNames) {
   // 재료 추가 핸들러
   const handleAdd = () => {
     const value = prompt("재료를 입력하세요. (예: 당근,마늘)");
-    if (!value) return;
-    const ingredientNames = value.split(",").map((v) => v.trim());
+    if (!value?.trim()) return;
+    const ingredientNames = value
+      .split(",")
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0); // 빈 문자열 제거
+    if (ingredientNames.length === 0) {
+      alert("유효한 재료 이름을 입력해주세요.");
+      return;
+    }
     addMutation.mutate(ingredientNames);
   };
 

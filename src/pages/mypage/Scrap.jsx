@@ -1,1 +1,8 @@
-export default function Scrap() {}
+export default function Scrap() {
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">내 스크랩</h2>
+      <p className="text-gray-600">준비 중입니다.</p>
+    </div>
+  );
+}

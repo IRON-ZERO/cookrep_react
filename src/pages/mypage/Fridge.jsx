@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import IngredientTag from "../../components/layouts/mypage/fridge/IngredientTag";
+import { useQuery } from "@tanstack/react-query";
 import RecommendedRecipeCard from "../../components/layouts/mypage/fridge/RecommendedRecipeCard";
 import { searchRecipesByIngredientIds } from "../../apis/user/userApi";
 import { useOutletContext } from "react-router";
@@ -16,7 +15,7 @@ export default function Fridge() {
 
   const nickname = user?.nickname;
 
-  // 선택된 재료 IDs/Namr
+  // 선택된 재료 IDs/Names
   const [activeIds, setActiveIds] = useState([]);
   const [activeNames, setActiveNames] = useState([]);
 

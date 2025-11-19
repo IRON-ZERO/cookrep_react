@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useOutletContext } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "../../apis/user/userApi";
-import MypageSidebar from "../../components/layouts/mypage/MypageSidebar";
 import useWithdrawMutation from "../../hooks/auth/useWithdrawMutation";
 
 export default function Profile() {
@@ -41,11 +40,23 @@ export default function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // 입력값 앞뒤 공백 제거
+    const firstName = form.firstName?.trim() || user.firstName;
+    const lastName = form.lastName?.trim() || user.lastName;
+    const country = form.country?.trim() || user.country;
+    const city = form.city?.trim() || user.city;
+
+    // 이름/성 필수 입력값 검사
+    if (!firstName || !lastName) {
+      alert("이름과 성을 모두 입력해주세요.");
+      return;
+    }
+
     updateUserMutation.mutate({
-      firstName: form.firstName || user.firstName,
-      lastName: form.lastName || user.lastName,
-      country: form.country || user.country,
-      city: form.city || user.city,
+      firstName,
+      lastName,
+      country,
+      city,
     });
   };
 
@@ -79,6 +90,7 @@ export default function Profile() {
               <div className="flex items-center gap-10">
                 <img
                   src="/images/icons/user-icon-1.png"
+                  alt={`${user.nickname}의 프로필 이미지`}
                   className="w-32 h-32 rounded-full"
                 />
                 <div className="flex flex-col">
@@ -145,6 +157,7 @@ export default function Profile() {
               <div className="flex items-center gap-10">
                 <img
                   src="/images/icons/user-icon-1.png"
+                  alt={`${user.nickname}의 프로필 이미지`}
                   className="w-32 h-32 rounded-full"
                 />
                 <div>
