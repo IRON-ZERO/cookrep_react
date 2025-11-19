@@ -8,7 +8,7 @@ const HomeRecipeListCard = React.memo(function HomeRecipeListCard({
   return (
     <li
       className="flex relative overflow-hidden rounded-md shadow-md w-full h-[500px] cursor-pointer"
-      onClick={() => setModal(recipe.RCP_NM)}
+      onClick={() => setModal(recipe.RCP_SEQ)}
     >
       <CookTypeBadge
         way={recipe.RCP_WAY2}

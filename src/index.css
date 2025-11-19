@@ -5,7 +5,7 @@
 @import "./styles/auth/authBgImg.css";
 @import "./styles/components/header.css";
 /* animate*/
-@import "./styles//shared/modal.css";
+@import "./styles/shared/modal.css";
 
 @theme {
   --ck-white: #efefef;

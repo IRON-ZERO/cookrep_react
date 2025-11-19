@@ -6,8 +6,8 @@ export default function HomeRecipeModal({recipe, setModal}) {
     const manual = recipe[`MANUAL${index}`];
     const manualImg = recipe[`MANUAL_IMG${index}`];
     if (
-      (manual && manual.trim !== "") ||
-      (manualImg && manualImg.trim !== "")
+      (manual && manual.trim() !== "") ||
+      (manualImg && manualImg.trim() !== "")
     ) {
       return {
         index,
@@ -16,7 +16,9 @@ export default function HomeRecipeModal({recipe, setModal}) {
       };
     }
   }).filter((i) => i !== undefined);
-  console.log(mapMannual);
+  //   ESC 키로 모달을 닫을 수 있도록 키보드 이벤트 핸들러 추가
+  // 모달이 열릴 때 포커스 트랩(focus trap) 구현
+  // 적절한 ARIA 속성 추가 (role="dialog", aria-modal="true", aria-labelledby 등)
   return (
     <article className="modal-animate fixed z-50 top-0 left-0 bg-slate-900/50 w-full h-full flex justify-center items-center">
       <div onClick={() => setModal("")} className="absolute w-full h-full" />
@@ -39,7 +41,7 @@ export default function HomeRecipeModal({recipe, setModal}) {
           />
           <ul>
             {mapMannual?.map((item) => (
-              <li>
+              <li key={item.index}>
                 <img src={item.manualImg} alt={item.manual} loading="lazy" />
                 <p>{item.manual}</p>
               </li>

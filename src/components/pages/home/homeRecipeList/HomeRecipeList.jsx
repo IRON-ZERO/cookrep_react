@@ -22,7 +22,7 @@ export default function HomeRecipeList() {
         ))}
       {modal && (
         <HomeRecipeModal
-          recipe={data.find((r) => r.RCP_NM === modal)}
+          recipe={data.find((r) => r.RCP_SEQ === modal)}
           setModal={setModal}
         />
       )}

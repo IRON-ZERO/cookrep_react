@@ -13,14 +13,14 @@ export default function NutritionFacts({car, eng, fat, na, pro}) {
         </p>
         <p>
           <span>지방</span>
-          <span>{fat}g</span>
+          <span>{fat} g</span>
         </p>
         <p>
           <span>나트륨</span>
           <span>{na} mg</span>
         </p>
         <p>
-          <span>프로틴</span>
+          <span>단백질</span>
           <span>{pro} g</span>
         </p>
       </div>
