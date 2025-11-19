@@ -31,6 +31,16 @@ export default function NavList() {
             Search
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to={"/upload"}
+            className={({isActive}) =>
+              `${isActive ? "text-(--ck-orange)" : "text-(--ck-black)"}`
+            }
+          >
+            Upload
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );
