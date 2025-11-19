@@ -6,7 +6,6 @@ export async function getUserDetail() {
     credentials: "include",
   });
   if (!response.ok) {
-    const text = await response.text;
     throw new Error(
       `유저 정보를 불러오지 못했습니다. (status: ${response.status})\n${text}`
     );
