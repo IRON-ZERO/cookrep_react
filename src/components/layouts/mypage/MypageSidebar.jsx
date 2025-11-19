@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import useLogoutMutation from "../../../hooks/auth/useLogoutMutation";
+import { useLocation } from "react-router";
 
 export default function MypageSidebar({ user }) {
   const { mutate } = useLogoutMutation();
@@ -66,6 +67,7 @@ export default function MypageSidebar({ user }) {
    네비게이션 아이템 컴포넌트
 ──────────────────────────────────────────── */
 function SidebarItem({ to, icon, label }) {
+  const location = useLocation();
   return (
     <NavLink
       to={to}
@@ -73,7 +75,12 @@ function SidebarItem({ to, icon, label }) {
         `
         flex items-center gap-3 w-full px-5 py-4 rounded-lg shadow-md
         transition-all text-gray-800
-        ${isActive ? "bg-gray-200 font-semibold" : "bg-gray-300"}
+        ${
+          isActive ||
+          (to == "/mypage/profile" && location.pathname == "/mypage")
+            ? "bg-gray-200 font-semibold"
+            : "bg-gray-300"
+        }
         hover:bg-gray-200
       `
       }

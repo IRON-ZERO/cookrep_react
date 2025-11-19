@@ -1,10 +1,10 @@
-import {Link} from "react-router";
+import { Link } from "react-router";
 import useUser from "../../../../hooks/auth/useUser";
 import useLogoutMutation from "../../../../hooks/auth/useLogoutMutation";
 
 export default function AuthNavList() {
-  const {data} = useUser();
-  const {mutate} = useLogoutMutation();
+  const { data } = useUser();
+  const { mutate } = useLogoutMutation();
   return (
     <nav>
       <ul>

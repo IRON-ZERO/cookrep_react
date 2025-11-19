@@ -1,42 +1,39 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { getUserDetail, updateUser } from "../../apis/user/userApi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateUser } from "../../apis/user/userApi";
 import MypageSidebar from "../../components/layouts/mypage/MypageSidebar";
 import useWithdrawMutation from "../../hooks/auth/useWithdrawMutation";
 
 export default function Profile() {
   // ─────────────────────────────────────────────
-  // 1. GET 유저 정보
+  // ✅ 선언부
   // ─────────────────────────────────────────────
+  const queryClient = useQueryClient();
   const { user } = useOutletContext();
 
-  // ─────────────────────────────────────────────
-  // 2. PATCH 유저 정보 수정
-  // ─────────────────────────────────────────────
-  const updateUserMutation = useMutation({
-    mutationFn: updateUser,
-    onSuccess: () => {
-      alert("수정 완료!");
-      window.location.reload();
-    },
-  });
-
-  // ─────────────────────────────────────────────
-  // 3. 수정 모드 제어
-  // ─────────────────────────────────────────────
   const [isEditing, setIsEditing] = useState(false);
-
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     country: "",
     city: "",
   });
+
+  const updateUserMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userDetail"] });
+      setIsEditing(false);
+      alert("수정 완료!");
+    },
+  });
+
+  const { mutate: withdraw } = useWithdrawMutation();
+
   // ─────────────────────────────────────────────
-  // 4. 유저 탈퇴
+  // ✅ 로직부
   // ─────────────────────────────────────────────
-  const { mutate } = useWithdrawMutation();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -52,6 +49,11 @@ export default function Profile() {
     });
   };
 
+  const handleWithdraw = () => {
+    if (confirm("정말 탈퇴하시겠습니까?")) {
+      withdraw();
+    }
+  };
   return (
     <div className="flex flex-1 h-full">
       {/* ───────────────────────────────
@@ -227,9 +229,7 @@ export default function Profile() {
           <button
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 text-sm cursor-pointer"
             onClick={() => {
-              if (confirm("정말 탈퇴하시겠습니까?")) {
-                mutate();
-              }
+              handleWithdraw();
             }}
           >
             회원 탈퇴

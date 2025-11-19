@@ -30,6 +30,7 @@ export async function withDraw() {
     credentials: "include",
     method: "DELETE",
   });
+  console.log(response);
   if (!response.ok) throw new Error("계정 삭제를 실패했습니다.");
 }
 
@@ -47,7 +48,7 @@ export async function addUserIngredients(ingredientNames) {
     credentials: "include",
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(ingredientNames),
+    body: JSON.stringify({ ingredientNames }),
   });
   if (!response.ok) throw new Error("유저 재료 추가를 실패했습니다.");
   return await response.json();
@@ -83,7 +84,7 @@ export async function addUserScrappedRecipes(recipeId) {
 }
 // 유저 레시피 스크랩 취소
 export async function cancleUserScrappedRecipe(recipeId) {
-  const response = await fetch(`${BASE_URL}/users/me/scraps/${recipeId}`, {
+  const response = await fetch(`${BASE_URL}/api/users/me/scraps/${recipeId}`, {
     credentials: "include",
     method: "DELETE",
   });
@@ -100,7 +101,7 @@ export async function getUserRecipes() {
 
 // 선택한 재료로 레시피 검색
 export async function searchRecipesByIngredientIds(ingredientIds) {
-  const response = await fetch(`${BASE_URL}/api/users/search-recipes`, {
+  const response = await fetch(`${BASE_URL}/api/recipe/search`, {
     credentials: "include",
     method: "POST",
     headers: { "Content-Type": "application/json" },

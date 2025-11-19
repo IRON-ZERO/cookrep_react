@@ -73,6 +73,7 @@ export const router = createBrowserRouter([
   {
     path: "/mypage",
     element: <Mypage />,
+    loader: authRequiredLoader,
     children: [
       {
         index: true,
