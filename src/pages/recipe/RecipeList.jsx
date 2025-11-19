@@ -18,7 +18,7 @@ export default function MyRecipeList() {
   }, [userId]);
 
   return (
-    <div className="mypage__layout" style={{ padding: "2rem" }}>
+    <div className="max-w-4xl mx-auto p-8 shadow-lg rounded-2xl mt-52 mb-11">
       {/*
       <aside className="sidebar">
         사이드바 (현재 비활성화)

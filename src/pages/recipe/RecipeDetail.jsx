@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import CommentSection from "../../components/comment/Comment";
 
 export default function RecipeDetail() {
-  const { recipeId } = useParams(); // URL에서 recipeId 가져오기
+  const { recipeId } = useParams();
   const navigate = useNavigate();
 
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}` , {credentials: "include",})
-
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+      credentials: "include",
+    })
       .then((res) => {
         if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
         return res.json();
       })
       .then((data) => {
+        console.log("백엔드 응답 데이터:", data); // 응답 확인
         setRecipe(data);
+        setIsOwner(data.owner); // 백엔드에서 내려준 작성자 여부
         setLoading(false);
       })
       .catch((err) => {
@@ -31,12 +35,12 @@ export default function RecipeDetail() {
 
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
       method: "DELETE",
-      credentials: "include"
+      credentials: "include",
     })
       .then((res) => {
         if (res.ok) {
           alert("삭제 완료!");
-          navigate("/mypage/recipes"); // 삭제 후 리스트로 이동
+          navigate("/mypage/recipes");
         } else {
           alert("삭제 실패");
         }
@@ -51,7 +55,7 @@ export default function RecipeDetail() {
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-10">
+    <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-52 mb-11">
       {/* 제목 */}
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
         {recipe.title}
@@ -69,17 +73,26 @@ export default function RecipeDetail() {
       {/* 기본 정보 */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-gray-700 text-center">
-          <p>👥 인원 수: <span className="font-semibold">{recipe.peopleCount}</span>명</p>
-          <p>⏱ 준비시간: <span className="font-semibold">{recipe.prepTime}</span>분</p>
-          <p>🍳 조리시간: <span className="font-semibold">{recipe.cookTime}</span>분</p>
-          <p>🔥 조회수: <span className="font-semibold">{recipe.views}</span></p>
-        </div>
-        <div className="text-center mt-2 text-gray-600">
-          ❤️ 좋아요 {recipe.likeCount} | 🍽 {recipe.kcal} kcal
-        </div>
+          <p>
+            ⏱ 준비시간: <span className="font-semibold">{recipe.prepTime}</span>분
+          </p>
+          <p>
+            🍳 조리시간: <span className="font-semibold">{recipe.cookTime}</span>분
+          </p>
+          <p>
+            👥 인원 수: <span className="font-semibold">{recipe.peopleCount}</span>명
+          </p>
+          <p>
+            🍽 칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
+          </p>
+          </div>
+          <div className="text-center mt-2 text-gray-600">
+            🔥 조회수 {recipe.views}
+          </div>
+
       </div>
 
-      {/* 재료 섹션 */}
+      {/* 재료 */}
       <div className="mb-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">🧂 사용된 재료</h2>
         {recipe.ingredients && recipe.ingredients.length > 0 ? (
@@ -127,7 +140,7 @@ export default function RecipeDetail() {
         )}
       </div>
 
-      {/* 버튼 영역 */}
+      {/* 버튼 */}
       <div className="flex justify-center gap-4 mt-10">
         <button
           onClick={() => navigate("/mypage/recipes")}
@@ -137,17 +150,36 @@ export default function RecipeDetail() {
         </button>
         <button
           onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          disabled={!isOwner}
+          className={`px-6 py-2 rounded-lg transition ${
+            isOwner ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
         >
           수정
         </button>
         <button
           onClick={deleteRecipe}
-          className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          disabled={!isOwner}
+          className={`px-6 py-2 rounded-lg transition ${
+            isOwner ? "bg-red-500 text-white hover:bg-red-600" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
         >
           삭제
         </button>
       </div>
+
+      {/* 좋아요 버튼 */}
+      {/* <div className="flex justify-end mt-6">
+        <button
+          onClick={handleLike}
+          className="flex items-center gap-2 text-red-500 hover:text-red-600 transition text-xl"
+        >
+          ❤️ <span className="text-lg font-semibold">{recipe.like}</span>
+        </button>
+      </div> */}
+
+      <CommentSection recipeId={recipeId} />
     </div>
+    
   );
 }

@@ -22,7 +22,7 @@ const RecipeUpload = () => {
 
   const [ingredients, setIngredients] = useState([]);
 
-  // 🔥 메인 이미지 미리보기 clean-up
+  // 메인 이미지 미리보기 clean-up
   useEffect(() => {
     if (!mainFile) return;
 
@@ -32,7 +32,7 @@ const RecipeUpload = () => {
     return () => URL.revokeObjectURL(previewUrl);
   }, [mainFile]);
 
-  // 🔥 단계 이미지 미리보기 clean-up
+  // 단계 이미지 미리보기 clean-up
   useEffect(() => {
     const urls = steps.map((s) => (s.file ? URL.createObjectURL(s.file) : null));
     setStepPreviews(urls);
@@ -173,7 +173,7 @@ const RecipeUpload = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-10">
+    <div className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-52 mb-11">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
         🍽 레시피 작성
       </h2>
