@@ -21,7 +21,7 @@ export default function RecommendedRecipeCard({
   });
 
   const scrapCancelMutation = useMutation({
-    mutationFn: (recipeId) => cancleUserScrappedRecipe(recipeId),
+    mutationFn: (recipeId) => cancelUserScrappedRecipe(recipeId),
     onSuccess: () => {
       queryClient.invalidateQueries(["filteredRecipes"]);
     },
@@ -34,7 +34,7 @@ export default function RecommendedRecipeCard({
   };
   return (
     <Link
-      to={`/mypage/recipe/${recipe.recipe_id}`}
+      to={`/mypage/recipe/${recipe.recipeId}`}
       className="block relative border border-[#9d9d9d] rounded-lg shadow overflow-hidden"
     >
       <img
