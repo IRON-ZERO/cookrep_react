@@ -104,16 +104,16 @@ const handleLike = async () => {
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-gray-700 text-center">
           <p>
-            ⏱ 준비시간: <span className="font-semibold">{recipe.prepTime}</span>분
+            준비시간: <span className="font-semibold">{recipe.prepTime}</span>분
           </p>
           <p>
-            🍳 조리시간: <span className="font-semibold">{recipe.cookTime}</span>분
+            조리시간: <span className="font-semibold">{recipe.cookTime}</span>분
           </p>
           <p>
-            👥 인원 수: <span className="font-semibold">{recipe.peopleCount}</span>명
+            인원 수: <span className="font-semibold">{recipe.peopleCount}</span>명
           </p>
           <p>
-            🍽 칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
+            칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
           </p>
           </div>
           <div className="text-center mt-2 text-gray-600">
@@ -124,7 +124,7 @@ const handleLike = async () => {
 
       {/* 재료 */}
       <div className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">🧂 사용된 재료</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">사용된 재료</h2>
         {recipe.ingredients && recipe.ingredients.length > 0 ? (
           <ul className="divide-y divide-gray-200 bg-gray-50 rounded-lg border border-gray-200">
             {recipe.ingredients.map((ing, idx) => (
@@ -141,7 +141,7 @@ const handleLike = async () => {
 
       {/* 조리 순서 */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">🍳 조리 단계</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">조리 단계</h2>
         {recipe.steps && recipe.steps.length > 0 ? (
           <div className="space-y-6">
             {recipe.steps.map((step) => (
@@ -178,24 +178,28 @@ const handleLike = async () => {
         >
           목록으로
         </button>
-        <button
-          onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
-          disabled={!isOwner}
-          className={`px-6 py-2 rounded-lg transition ${
-            isOwner ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          수정
-        </button>
-        <button
-          onClick={deleteRecipe}
-          disabled={!isOwner}
-          className={`px-6 py-2 rounded-lg transition ${
-            isOwner ? "bg-red-500 text-white hover:bg-red-600" : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          삭제
-        </button>
+
+         {isOwner && (
+    <>
+      {/* 수정 버튼 */}
+      <button
+        type="button"
+        onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
+        className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition shadow-sm"
+      >
+        수정
+      </button>
+
+      {/* 삭제 버튼 */}
+      <button
+        type="button"
+        onClick={deleteRecipe}
+        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition shadow-sm"
+      >
+        삭제
+      </button>
+    </>
+  )}
       </div>
 
       {/* 좋아요 버튼 */}
