@@ -1,54 +1,47 @@
 import { useEffect, useState } from "react";
 
-export default function Comment({ recipeId }) {
+export default function Comment({ recipeId, loginUserId }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
   // 댓글 불러오기
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${recipeId}`, {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/recipe/${recipeId}`, {
       credentials: "include",
     })
       .then((res) => {
-        if (!res.ok) {
-            throw new Error("댓글을 불러오지 못했습니다.");
-        }
+        if (!res.ok) throw new Error("댓글을 불러오지 못했습니다.");
         return res.json();
-        })
-        .then((data) => setComments(data))
-        .catch((err) => {
-        console.error("댓글 불러오기 오류:", err);
-        // 선택적으로 에러 상태를 UI에 표시
-        });
-    }, [recipeId]);
+      })
+      .then((data) => setComments(data))
+      .catch((err) => console.error("댓글 불러오기 오류:", err));
+  }, [recipeId]);
 
   // 댓글 작성
   const writeComment = () => {
     if (!newComment.trim()) {
-    alert("댓글 내용을 입력해주세요.");
-    return;
+      alert("댓글 내용을 입력해주세요.");
+      return;
     }
 
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipeId, content: newComment }),
+      body: JSON.stringify({ recipeId, contents: newComment, userId: loginUserId }),
     })
       .then((res) => {
-    if (!res.ok) {
-        throw new Error("댓글 작성에 실패했습니다.");
-    }
-    return res.json();
-    })
-    .then((saved) => {
-    setComments((prev) => [...prev, saved]);
-    setNewComment("");
-    })
-    .catch((err) => {
-    console.error("댓글 작성 오류:", err);
-    alert("댓글 작성 중 오류가 발생했습니다.");
-    });
+        if (!res.ok) throw new Error("댓글 작성에 실패했습니다.");
+        return res.json();
+      })
+      .then((saved) => {
+        setComments((prev) => [...prev, { ...saved, owner: true }]);
+        setNewComment("");
+      })
+      .catch((err) => {
+        console.error("댓글 작성 오류:", err);
+        alert("댓글 작성 중 오류가 발생했습니다.");
+      });
   };
 
   // 댓글 삭제
@@ -60,7 +53,7 @@ export default function Comment({ recipeId }) {
       credentials: "include",
     })
       .then((res) => {
-                if (res.ok) {
+        if (res.ok) {
           setComments((prev) => prev.filter((c) => c.commentId !== commentId));
           alert("댓글이 삭제되었습니다.");
         } else {
@@ -87,14 +80,15 @@ export default function Comment({ recipeId }) {
             >
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-800">
-                  {c.nickname}
+                  {c.nickname || c.userId}
                 </span>
                 <span className="text-sm text-gray-500">
                   {new Date(c.createdAt).toLocaleString()}
                 </span>
               </div>
-              <p className="text-gray-700">{c.content}</p>
+              <p className="text-gray-700">{c.contents}</p>
 
+              {/* 작성자만 삭제 버튼 표시 */}
               {c.owner && (
                 <button
                   className="text-red-500 text-sm mt-2 hover:underline"
