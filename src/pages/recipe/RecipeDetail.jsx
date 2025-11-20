@@ -72,6 +72,7 @@ const handleLike = async () => {
     setRecipe((prev) => ({
       ...prev,
       like: data.likeCount, // 백엔드에서 내려주는 좋아요 수
+      liked: data.liked, // 하트 모양 변경을 위해 필요
     }));
   } catch (err) {
     console.error("좋아요 실패:", err);
@@ -201,10 +202,16 @@ const handleLike = async () => {
       <div className="flex justify-end mt-6">
         <button
           onClick={handleLike}
-          className="flex items-center gap-2 text-red-500 hover:text-red-600 transition text-xl"
+          className="flex items-center gap-2 hover:text-red-600 transition text-xl"
         >
-          ❤️ <span className="text-lg font-semibold">{recipe.like}</span>
+          {recipe.liked ? (
+            <span className="text-red-500 text-2xl">❤️</span> // 좋아요 O
+          ) : (
+            <span className="text-gray-400 text-2xl">🤍</span> // 좋아요 X
+          )}
+          <span className="text-lg font-semibold text-red-500">{recipe.like}</span>
         </button>
+
       </div>
 
       <Comment recipeId={recipeId} />
