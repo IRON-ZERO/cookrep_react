@@ -78,7 +78,7 @@ export default function Ingredient({
       setAddInput("");
       setTags([]);
       return;
-    } // 모달 닫혔을 때 인풋 태그들 초기화
+    } // 모달이 닫혔을 때 인풋 태그들 초기화
 
     const handleEsc = (e) => {
       if (e.key === "Escape") {
