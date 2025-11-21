@@ -7,7 +7,6 @@ export default function RecipeEdit() {
   const navigate = useNavigate();
   const { data: userData } = useUser();
   const userId = userData.userId;
-  // const userId = "0c79275d-716f-4551-83ab-95265b648308"; // 임시 테스트용 userId
 
   const [recipe, setRecipe] = useState(null);
   const [steps, setSteps] = useState([]);
@@ -18,7 +17,6 @@ export default function RecipeEdit() {
 
   // ingredients 상태 변경 감지용 useEffect
   useEffect(() => {
-    // console.log("🍳 현재 재료 상태:", ingredients);
   }, [ingredients]);
 
   // 레시피 불러오기
@@ -231,7 +229,7 @@ export default function RecipeEdit() {
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-2xl mt-52 mb-11">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">🍽 레시피 수정</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">레시피 수정</h2>
 
       {/* 제목 */}
       <div className="mb-6">
@@ -267,7 +265,7 @@ export default function RecipeEdit() {
       {/* 기본 정보 */}
       <div className="mb-8">
         <label className="block text-lg font-semibold mb-3 text-gray-700">
-          👥 인원 수 / ⏱ 준비시간 / 🍳 조리시간 / 🍽 칼로리 (kcal)
+          인원 수 / 준비시간 / 조리시간 / 칼로리 (kcal)
         </label>
         <div className="grid grid-cols-4 gap-4">
           <input
@@ -303,7 +301,7 @@ export default function RecipeEdit() {
 
       {/* 재료 */}
       <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-3 text-gray-700">🧂 사용된 재료</h3>
+        <h3 className="text-xl font-semibold mb-3 text-gray-700">사용된 재료</h3>
         {ingredients.map((ing, idx) => (
           <div key={idx} className="flex gap-3 mb-2 items-center">
             <input
@@ -322,9 +320,8 @@ export default function RecipeEdit() {
             />
             <button
               onClick={() => deleteIngredient(idx)}
-              className="text-red-500 hover:text-red-700 text-lg"
-            >
-              ❌
+              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
+              삭제
             </button>
           </div>
         ))}
@@ -338,7 +335,7 @@ export default function RecipeEdit() {
 
       {/* 조리 단계 */}
       <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4 text-gray-700">🍳 조리 단계</h3>
+        <h3 className="text-xl font-semibold mb-4 text-gray-700">조리 단계</h3>
 
         {steps.map((step, idx) => (
           <div
@@ -352,29 +349,51 @@ export default function RecipeEdit() {
               placeholder="조리 내용을 입력하세요"
               className="w-full border border-gray-300 rounded-lg p-2 mb-3 focus:ring-2 focus:ring-orange-400"
             />
-            {step.imageUrl && (
-              <img
-                src={step.imageFile ? URL.createObjectURL(step.imageFile) : step.imageUrl}
-                alt={`Step ${step.stepNum}`}
-                className="w-36 h-36 object-cover rounded-lg mb-3 border border-gray-300 shadow-sm"
-              />
-            )}
-            <div className="flex items-center gap-3">
-              <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
-                이미지 변경
-                <input
-                  type="file"
-                  onChange={(e) => updateStepImage(idx, e.target.files[0])}
-                  className="hidden"
-                />
-              </label>
-              <button
-                onClick={() => deleteStep(idx)}
-                className="text-red-500 hover:text-red-700 text-lg"
-              >
-                ❌ 단계 삭제
-              </button>
-            </div>
+             {step.imageUrl ? (
+    <>
+      <img
+        src={step.imageFile ? URL.createObjectURL(step.imageFile) : step.imageUrl}
+        alt={`Step ${step.stepNum}`}
+        className="w-36 h-36 object-cover rounded-lg mb-3 border border-gray-300 shadow-sm"
+      />
+      <div className="flex items-center gap-3">
+        <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
+          이미지 변경
+          <input
+            type="file"
+            onChange={(e) => updateStepImage(idx, e.target.files[0])}
+            className="hidden"
+          />
+        </label>
+        <button
+          onClick={() => deleteStep(idx)}
+          className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
+          단계 삭제
+        </button>
+      </div>
+    </>
+  ) : (
+    <>
+      <label
+        htmlFor={`stepImage-${idx}`}
+        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-orange-50 mb-3"
+      >
+        <p className="text-gray-500">이미지를 선택하거나 드래그하세요</p>
+      </label>
+      <input
+        id={`stepImage-${idx}`}
+        type="file"
+        accept="image/*"
+        onChange={(e) => updateStepImage(idx, e.target.files[0])}
+        className="hidden"
+      />
+      <button
+        onClick={() => deleteStep(idx)}
+        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
+        단계 삭제
+      </button>
+    </>
+  )}
           </div>
         ))}
 
