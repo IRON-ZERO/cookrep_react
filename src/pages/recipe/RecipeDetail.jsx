@@ -11,27 +11,27 @@ export default function RecipeDetail() {
   const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-  fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-    credentials: "include",
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
-      return res.json();
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+      credentials: "include",
     })
-    .then((data) => {
-      setRecipe({
-        ...data,
-        liked: data.liked, // 백엔드에서 이미 좋아요 여부 내려줌
-        like: data.like,   // 좋아요 수
+      .then((res) => {
+        if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
+        return res.json();
+      })
+      .then((data) => {
+        setRecipe({
+          ...data,
+          liked: data.liked, // 백엔드에서 이미 좋아요 여부 내려줌
+          like: data.like,   // 좋아요 수
+        });
+        setIsOwner(data.owner);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
       });
-      setIsOwner(data.owner);
-      setLoading(false);
-    })
-    .catch((err) => {
-      console.error(err);
-      setLoading(false);
-    });
-}, [recipeId]);
+  }, [recipeId]);
 
 
   const deleteRecipe = () => {
@@ -72,7 +72,6 @@ const handleLike = async () => {
     }
 
     const data = await res.json();
-    console.log("좋아요 성공:", data);
 
     setRecipe((prev) => ({
       ...prev,

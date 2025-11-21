@@ -325,9 +325,6 @@ const RecipeUpload = () => {
                 >
                   삭제
                 </button>
-
-
-
               </div>
             ))}
             <button

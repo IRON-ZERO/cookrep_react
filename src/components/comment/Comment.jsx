@@ -5,7 +5,7 @@ export default function Comment({ recipeId }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const { data: userData } = useUser();
-  const userId = userData.userId;
+  const userId = userData?.userId;
   const nickname = userData?.userName;
 
   const [editingCommentId, setEditingCommentId] = useState(null);
@@ -31,12 +31,6 @@ export default function Comment({ recipeId }) {
       return;
     }
 
-    console.log("📌 댓글 POST 데이터:", {
-      recipeId,
-      userId,
-      nickname,
-      contents: newComment,
-    });
 
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment`, {
       method: "POST",
