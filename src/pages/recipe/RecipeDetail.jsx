@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Comment from "../../components/comment/Comment";
+import Comment from "../../components/aboutrecipe/Comment";
+import ViewsCounter from "../../components/aboutrecipe/ViewCounter";
 
 export default function RecipeDetail() {
   const { recipeId } = useParams();
@@ -120,9 +121,7 @@ const handleLike = async () => {
             칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
           </p>
           </div>
-          <div className="text-center mt-2 text-gray-600">
-            🔥 조회수 {recipe.views}
-          </div>
+          <ViewsCounter recipeId={recipeId} />
 
       </div>
 
