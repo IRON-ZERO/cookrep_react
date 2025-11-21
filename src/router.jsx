@@ -11,8 +11,8 @@ import Mypage from "./pages/mypage/Mypage";
 import Profile from "./pages/mypage/Profile";
 import Fridge from "./pages/mypage/Fridge";
 import Freezer from "./pages/mypage/Freezer";
-import Scrap from "./pages/mypage/Scrap";
 import MyRecipes from "./pages/mypage/MyRecipes";
+import Main from "./pages/Main";
 
 const checkAuth = async () => {
   try {
@@ -46,10 +46,10 @@ export const router = createBrowserRouter([
         path: "/upload",
         element: <RecipeUpload />,
       },
-      {
-        path: "/mypage/recipes",
-        element: <RecipeList />,
-      },
+      // {
+      //   path: "/mypage/recipes",
+      //   element: <RecipeList />,
+      // },
       {
         path: "/mypage/recipe/:recipeId",
         element: <RecipeDetail />,
@@ -90,10 +90,6 @@ export const router = createBrowserRouter([
       {
         path: "freezer",
         element: <Freezer />,
-      },
-      {
-        path: "scrap",
-        element: <Scrap />,
       },
       {
         path: "recipes",

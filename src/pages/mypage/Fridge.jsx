@@ -27,7 +27,6 @@ export default function Fridge() {
   });
   // 추천 레시피 리스트 적용
   const recommendList = filteredRecipes ?? [];
-
   // ============================================================
   // 🟩 로직부 (핸들러 / 리스트 선택)
   // ============================================================
@@ -37,11 +36,14 @@ export default function Fridge() {
   // ============================================================
 
   return (
-    <div className="flex">
-      <section className="flex-1 p-6">
-        <h2 className="text-2xl font-bold mb-6">{nickname}님의 냉장고</h2>
+    <div className="flex-1 min-h-screen">
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <h1 className="text-3xl font-bold">{nickname}님의 냉장고</h1>
+        </div>
 
-        {/* ----------------------------- 재료 섹션 ----------------------------- */}
+        {/* Ingredients Card */}
         <Ingredient
           user={user}
           activeIds={activeIds}
@@ -50,28 +52,44 @@ export default function Fridge() {
           setActiveNames={setActiveNames}
         />
 
-        {/* ----------------------------- 추천 레시피 섹션 ----------------------------- */}
-        <div className="border-2 border-[#9d9d9d] rounded-xl p-12">
-          <h3 className="text-xl font-semibold mb-4">
-            CookRep이 추천하는 레시피예요.
-          </h3>
-
-          {recommendList.length === 0 ? (
-            <p className="text-gray-600">추천할 레시피가 없어요 😅</p>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto ">
-              {recommendList.map(({ recipe, matchCount, scrapped }) => (
-                <RecommendedRecipeCard
-                  key={recipe.recipeId}
-                  recipe={recipe}
-                  matchCount={matchCount}
-                  scrapActive={scrapped}
-                />
-              ))}
+        {/* Recommended Recipes Card */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          <div className="p-8">
+            {/* Header */}
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                추천 레시피
+              </h2>
+              <p className="text-gray-600">
+                CookRep이 당신을 위해 선별한 레시피예요.
+              </p>
             </div>
-          )}
+
+            {/* Recipe Grid */}
+            {recommendList.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">추천할 레시피가 없어요.</p>
+                <p className="text-gray-500 mt-2">
+                  위에서 재료를 선택해주세요!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto">
+                {recommendList.map(({ recipe, matchCount, scrapped }) => {
+                  return (
+                    <RecommendedRecipeCard
+                      key={recipe.recipeId}
+                      recipe={recipe}
+                      matchCount={matchCount}
+                      scrapped={scrapped}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
