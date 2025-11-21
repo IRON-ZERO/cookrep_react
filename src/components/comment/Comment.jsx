@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
+import useUser from "../../hooks/auth/useUser";
 
-export default function Comment({ recipeId, loginUserId }) {
+export default function Comment({ recipeId }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const { data: userData } = useUser();
+  const userId = userData.userId;
+  const nickname = userData?.userName;
+
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingCommentText, setEditingCommentText] = useState("");
 
   // 댓글 불러오기
   useEffect(() => {
@@ -24,11 +31,18 @@ export default function Comment({ recipeId, loginUserId }) {
       return;
     }
 
+    console.log("📌 댓글 POST 데이터:", {
+      recipeId,
+      userId,
+      nickname,
+      contents: newComment,
+    });
+
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipeId, contents: newComment, userId: loginUserId }),
+      body: JSON.stringify({ recipeId, contents: newComment, userId }),
     })
       .then((res) => {
         if (!res.ok) throw new Error("댓글 작성에 실패했습니다.");
@@ -66,6 +80,38 @@ export default function Comment({ recipeId, loginUserId }) {
       });
   };
 
+  // 댓글 수정
+  const updateComment = (commentId) => {
+    if (!editingCommentText.trim()) {
+      alert("댓글 내용을 입력해주세요.");
+      return;
+    }
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${commentId}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: editingCommentText, userId }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("댓글 수정에 실패했습니다.");
+        return res.json();
+      })
+      .then((updated) => {
+        setComments((prev) =>
+          prev.map((c) =>
+            c.commentId === commentId ? { ...c, contents: editingCommentText } : c
+          )
+        );
+        setEditingCommentId(null);
+        setEditingCommentText("");
+      })
+      .catch((err) => {
+        console.error("댓글 수정 오류:", err);
+        alert("댓글 수정 중 오류가 발생했습니다.");
+      });
+  };
+
   return (
     <div className="mt-14 border-t border-gray-300 pt-10">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">💬 댓글</h2>
@@ -86,16 +132,53 @@ export default function Comment({ recipeId, loginUserId }) {
                   {new Date(c.createdAt).toLocaleString()}
                 </span>
               </div>
-              <p className="text-gray-700">{c.contents}</p>
 
-              {/* 작성자만 삭제 버튼 표시 */}
-              {c.owner && (
-                <button
-                  className="text-red-500 text-sm mt-2 hover:underline"
-                  onClick={() => deleteComment(c.commentId)}
-                >
-                  삭제
-                </button>
+              {editingCommentId === c.commentId ? (
+                <div>
+                  <textarea
+                    value={editingCommentText}
+                    onChange={(e) => setEditingCommentText(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg p-2 mb-2"
+                    rows={3}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => updateComment(c.commentId)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
+                      저장
+                    </button>
+                    <button
+                      onClick={() => setEditingCommentId(null)}
+                      className="bg-gray-300 px-3 py-1 rounded"
+                    >
+                      취소
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-700">{c.contents}</p>
+              )}
+
+              {/* 작성자만 삭제/수정 버튼 표시 */}
+              {c.owner && editingCommentId !== c.commentId && (
+                <div className="flex gap-2 mt-2">
+                  <button
+                    className="text-red-500 text-sm hover:underline"
+                    onClick={() => deleteComment(c.commentId)}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    className="text-blue-500 text-sm hover:underline"
+                    onClick={() => {
+                      setEditingCommentId(c.commentId);
+                      setEditingCommentText(c.contents);
+                    }}
+                  >
+                    수정
+                  </button>
+                </div>
               )}
             </li>
           ))}

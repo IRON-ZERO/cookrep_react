@@ -11,23 +11,28 @@ export default function RecipeDetail() {
   const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-      credentials: "include",
+  fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+    credentials: "include",
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
+      return res.json();
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
-        return res.json();
-      })
-      .then((data) => {
-        setRecipe(data);
-        setIsOwner(data.owner); // 백엔드에서 내려준 작성자 여부
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
+    .then((data) => {
+      setRecipe({
+        ...data,
+        liked: data.liked, // 백엔드에서 이미 좋아요 여부 내려줌
+        like: data.like,   // 좋아요 수
       });
-  }, [recipeId]);
+      setIsOwner(data.owner);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error(err);
+      setLoading(false);
+    });
+}, [recipeId]);
+
 
   const deleteRecipe = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
