@@ -15,7 +15,9 @@ export default function MypageSidebar({ user }) {
       <div className="text-center mb-10">
         <img
           src="/images/icons/user-icon-1.png"
-          alt={user?.nickname ? `${user.nickname}의 프로필 사진` : "프로필 사진"}
+          alt={
+            user?.nickname ? `${user.nickname}의 프로필 사진` : "프로필 사진"
+          }
           className="w-20 h-20 rounded-full border-2 border-gray-200 mx-auto mb-2"
         />
         <h3 className="font-bold text-lg">{user?.nickname}</h3>
@@ -38,11 +40,6 @@ export default function MypageSidebar({ user }) {
           to="/mypage/freezer"
           icon="/images/icons/fridge_icon.png"
           label="내 냉동고"
-        />
-        <SidebarItem
-          to="/mypage/scrap"
-          icon="/images/icons/scraped_deactive.png"
-          label="내 스크랩"
         />
         <SidebarItem
           to="/mypage/recipes"

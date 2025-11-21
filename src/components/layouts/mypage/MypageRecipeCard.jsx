@@ -1,16 +1,12 @@
 import { Link } from "react-router-dom";
-import { Bookmark } from "../../global/icons/BookMark";
+import { Bookmark } from "../global/icons/BookMark";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addUserScrappedRecipes,
   cancelUserScrappedRecipe,
-} from "../../../../apis/user/userApi";
+} from "../../../apis/user/userApi";
 
-export default function RecommendedRecipeCard({
-  recipe = {},
-  scrapped,
-  matchCount,
-}) {
+export default function MypageRecipeCard({ recipe = {}, scrapActive }) {
   const queryClient = useQueryClient();
 
   // 유연한 필드 매핑 (API 응답 형식이 섞여 있을 수 있으므로 안전하게 추출)
@@ -34,6 +30,8 @@ export default function RecommendedRecipeCard({
       : typeof recipe.likes === "number"
       ? recipe.likes
       : recipe.like_count ?? 0;
+  const scrapped =
+    typeof recipe.scrapped === "boolean" ? recipe.scrapped : !!scrapActive;
 
   // cookLevel에 따른 배지 색상 결정 (한글/영문 모두 대응)
   const getCookLevelBadgeColor = (level) => {
@@ -55,50 +53,46 @@ export default function RecommendedRecipeCard({
   // 기본 동작: 부모에서 onToggleScrap을 넘겨주면 사용, 없으면 내부에서 mutation 실행
   const scrapAddMutation = useMutation({
     mutationFn: (recipeId) => addUserScrappedRecipes(recipeId),
-    onSuccess: () => queryClient.invalidateQueries(["filteredRecipes"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["filteredRecipes"]);
+      queryClient.invalidateQueries(["userRecipes"]);
+      queryClient.invalidateQueries(["userScraps"]);
+    },
   });
   const scrapCancelMutation = useMutation({
     mutationFn: (recipeId) => cancelUserScrappedRecipe(recipeId),
-    onSuccess: () => queryClient.invalidateQueries(["filteredRecipes"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["filteredRecipes"]);
+      queryClient.invalidateQueries(["userRecipes"]);
+      queryClient.invalidateQueries(["userScraps"]);
+    },
   });
 
   const handleScrapClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!id) return;
-
     if (scrapped) scrapCancelMutation.mutate(id);
     else scrapAddMutation.mutate(id);
   };
   return (
     <Link
       to={`/mypage/recipe/${id}`}
-      className="group block relative border border-[#9d9d9d] rounded-lg shadow overflow-hidden hover:shadow-md transition"
+      className="block relative border border-[#9d9d9d] rounded-lg shadow overflow-hidden hover:shadow-md transition"
       aria-label={title}
     >
-      {matchCount !== undefined && matchCount !== null && (
-        <p
-          className="text-xs bg-slate-400/45 px-1 py-0.5 rounded-md text-white absolute top-2 left-3 z-30 transition-all duration-300 ease-in-out
-        group-hover:-translate-y-2 group-hover:opacity-0"
-        >
-          재료 일치 {matchCount}개
-        </p>
-      )}
-      <div className="h-36 w-full overflow-hidden relative">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="h-36 w-full object-cover brightness-50 hover:brightness-100 transition-all duration-300 ease-in-out scale-100 hover:scale-105"
-        />
-      </div>
+      <img
+        src={thumbnail}
+        alt={title}
+        className="h-36 w-full object-cover brightness-50 hover:brightness-100 transition-all duration-300 ease-in-out scale-100 hover:scale-105"
+      />
       <div className="p-3">
         <button
           aria-pressed={scrapped}
           title={scrapped ? "스크랩 취소" : "스크랩"}
-          className={`size-8 absolute top-2 right-2 p-2 rounded-full cursor-pointer focus:outline-none
-    transition-colors duration-300
-    ${scrapped ? "bg-yellow-400" : "bg-gray-200"}
-  `}
+          className={`size-8 absolute top-2 right-2 p-2 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            scrapped ? "bg-yellow-400" : "bg-gray-200"
+          }`}
           onClick={handleScrapClick}
         >
           <Bookmark scrapActive={scrapped} />
