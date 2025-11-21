@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { recipeApi } from "../../apis/recipe/api";
 
 export default function MyRecipeList() {
   // 임시 테스트용 userId
@@ -9,12 +10,11 @@ export default function MyRecipeList() {
 
   // ✅ 레시피 목록 불러오기
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/user/${userId}`,{credentials: "include",}) // 백엔드 포트 맞춰주세요
-      .then((res) => res.json())
-      .then((data) => {
-        setRecipes(data || []); // data 자체가 배열임
-      })
-      .catch((err) => console.error("레시피 목록 불러오기 오류:", err));
+    const fetchRecipes = async () => {
+      const data = await recipeApi.getUserRecipes(userId);
+      setRecipes(data || []);
+    };
+    fetchRecipes();
   }, [userId]);
 
   return (

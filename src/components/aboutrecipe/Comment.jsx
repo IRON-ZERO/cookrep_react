@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useUser from "../../hooks/auth/useUser";
+import { recipeApi } from "../../apis/recipe/api";
 
 export default function Comment({ recipeId }) {
   const [comments, setComments] = useState([]);
@@ -13,97 +14,42 @@ export default function Comment({ recipeId }) {
 
   // 댓글 불러오기
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/recipe/${recipeId}`, {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("댓글을 불러오지 못했습니다.");
-        return res.json();
-      })
-      .then((data) => setComments(data))
-      .catch((err) => console.error("댓글 불러오기 오류:", err));
+    const fetchComments = async () => {
+      const data = await recipeApi.getComments(recipeId);
+      setComments(data);
+    };
+    fetchComments();
   }, [recipeId]);
 
   // 댓글 작성
-  const writeComment = () => {
-    if (!newComment.trim()) {
-      alert("댓글 내용을 입력해주세요.");
-      return;
-    }
-
-
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipeId, contents: newComment, userId }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("댓글 작성에 실패했습니다.");
-        return res.json();
-      })
-      .then((saved) => {
-        setComments((prev) => [...prev, { ...saved, owner: true }]);
-        setNewComment("");
-      })
-      .catch((err) => {
-        console.error("댓글 작성 오류:", err);
-        alert("댓글 작성 중 오류가 발생했습니다.");
-      });
+  const writeComment = async () => {
+    if (!newComment.trim()) return alert("댓글 내용을 입력해주세요.");
+    const saved = await recipeApi.createComment({ recipeId, contents: newComment, userId });
+    if (saved) {
+      setComments((prev) => [...prev, { ...saved, owner: true }]);
+      setNewComment("");
+    } else alert("댓글 작성 실패");
   };
 
   // 댓글 삭제
-  const deleteComment = (commentId) => {
+  const deleteComment = async (commentId) => {
     if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
-
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${commentId}`, {
-      method: "DELETE",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          setComments((prev) => prev.filter((c) => c.commentId !== commentId));
-          alert("댓글이 삭제되었습니다.");
-        } else {
-          alert("댓글 삭제에 실패했습니다.");
-        }
-      })
-      .catch((err) => {
-        console.error("댓글 삭제 오류:", err);
-        alert("댓글 삭제 중 오류가 발생했습니다.");
-      });
+    const ok = await recipeApi.deleteComment(commentId);
+    if (ok) setComments((prev) => prev.filter((c) => c.commentId !== commentId));
+    else alert("댓글 삭제 실패");
   };
 
   // 댓글 수정
-  const updateComment = (commentId) => {
-    if (!editingCommentText.trim()) {
-      alert("댓글 내용을 입력해주세요.");
-      return;
-    }
-
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${commentId}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: editingCommentText, userId }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("댓글 수정에 실패했습니다.");
-        return res.json();
-      })
-      .then((updated) => {
-        setComments((prev) =>
-          prev.map((c) =>
-            c.commentId === commentId ? { ...c, contents: editingCommentText } : c
-          )
-        );
-        setEditingCommentId(null);
-        setEditingCommentText("");
-      })
-      .catch((err) => {
-        console.error("댓글 수정 오류:", err);
-        alert("댓글 수정 중 오류가 발생했습니다.");
-      });
+  const updateComment = async (commentId) => {
+    if (!editingCommentText.trim()) return alert("댓글 내용을 입력해주세요.");
+    const updated = await recipeApi.updateComment({ commentId, contents: editingCommentText, userId });
+    if (updated) {
+      setComments((prev) =>
+        prev.map((c) => (c.commentId === commentId ? { ...c, contents: editingCommentText } : c))
+      );
+      setEditingCommentId(null);
+      setEditingCommentText("");
+    } else alert("댓글 수정 실패");
   };
 
   return (

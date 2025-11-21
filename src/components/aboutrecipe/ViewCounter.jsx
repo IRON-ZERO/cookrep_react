@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { recipeApi } from "../../apis/recipe/api";
 
 export default function ViewsCounter({ recipeId }) {
   const [views, setViews] = useState(0);
@@ -23,15 +24,8 @@ export default function ViewsCounter({ recipeId }) {
           sessionStorage.setItem("viewedRecipes", JSON.stringify(viewedRecipes));
         }
 
-        const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/recipe/countview/${recipeId}?increment=${increment}`,
-          { credentials: "include" }
-        );
-
-        if (!res.ok) throw new Error("조회수 정보를 불러오지 못했습니다.");
-
-        const data = await res.json();
-        setViews(data.views);
+        const count = await recipeApi.getViews(recipeId, increment);
+        setViews(count);
       } catch (err) {
         console.error(err);
       }

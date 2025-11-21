@@ -2,7 +2,7 @@ import {BASE_URL} from "../baseUrl";
 export const openApi = {
   getOpenAPIRecipeSlideList: async ({start, end}) => {
     const response = await fetch(
-      `${BASE_URL}/api/open/getApiRecipe/${start}/${end}`,
+      `${BASE_URL}/open/getApiRecipe/${start}/${end}`,
       {
         method: "GET",
         credentials: "include",
@@ -19,7 +19,7 @@ export const openApi = {
   },
   getOpenAPIRecipeListDesc: async ({start, end}) => {
     const response = await fetch(
-      `${BASE_URL}/api/open/getApiRecipeSortDesc/${start}/${end}`,
+      `${BASE_URL}/open/getApiRecipeSortDesc/${start}/${end}`,
       {
         method: "GET",
         credentials: "include",

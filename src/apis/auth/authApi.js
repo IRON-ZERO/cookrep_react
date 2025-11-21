@@ -3,7 +3,7 @@ import { BASE_URL } from "../baseUrl";
 export const authApi = {
   // LOGIN
   login: async (data) => {
-    const response = await fetch(`${BASE_URL}/api/loginByNickname`, {
+    const response = await fetch(`${BASE_URL}/loginByNickname`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -22,7 +22,7 @@ export const authApi = {
   },
   // JOIN
   join: async (data) => {
-    const response = await fetch(`${BASE_URL}/api/join`, {
+    const response = await fetch(`${BASE_URL}/join`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -38,7 +38,7 @@ export const authApi = {
   },
   // LOGOUT
   logout: async () => {
-    const response = await fetch(`${BASE_URL}/api/logout`, {
+    const response = await fetch(`${BASE_URL}/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -50,7 +50,7 @@ export const authApi = {
   },
   // LOGGED IN USER
   loggedIn: async () => {
-    const response = await fetch(`${BASE_URL}/api/check`, {
+    const response = await fetch(`${BASE_URL}/check`, {
       method: "GET",
       credentials: "include",
     });

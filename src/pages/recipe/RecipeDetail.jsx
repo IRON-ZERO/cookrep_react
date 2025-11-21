@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Comment from "../../components/aboutrecipe/Comment";
 import ViewsCounter from "../../components/aboutrecipe/ViewCounter";
+import { recipeApi } from "../../apis/recipe/api";
 
 export default function RecipeDetail() {
   const { recipeId } = useParams();
@@ -11,78 +12,50 @@ export default function RecipeDetail() {
   const [loading, setLoading] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
 
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
-        return res.json();
-      })
-      .then((data) => {
-        setRecipe({
-          ...data,
-          liked: data.liked, // 백엔드에서 이미 좋아요 여부 내려줌
-          like: data.like,   // 좋아요 수
+  // 레시피 불러오기
+    useEffect(() => {
+      recipeApi.getRecipe(recipeId)
+        .then((data) => {
+          setRecipe({ ...data, liked: data.liked, like: data.like });
+          setIsOwner(data.owner);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
         });
-        setIsOwner(data.owner);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [recipeId]);
+    }, [recipeId]);
 
 
-  const deleteRecipe = () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+  // 삭제
+    const deleteRecipe = () => {
+  if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-      method: "DELETE",
-      credentials: "include",
+  recipeApi.deleteRecipe(recipeId)
+    .then(() => {
+      alert("삭제 완료!");
+      navigate("/mypage/recipes");
     })
-      .then((res) => {
-        if (res.ok) {
-          alert("삭제 완료!");
-          navigate("/mypage/recipes");
-        } else {
-          alert("삭제 실패");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("삭제 중 오류 발생");
-      });
-  };
-
-const handleLike = async () => {
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/recipe/like/${recipeId}`, // recipeId 포함
-      {
-        method: "POST",
-        credentials: "include", // 세션 쿠키 포함
-      }
-    );
-
-    if (!res.ok) {
-      const text = await res.text(); // JSON이 아닌 경우 처리
-      console.error("좋아요 실패:", res.status, text);
-      return;
-    }
-
-    const data = await res.json();
-
-    setRecipe((prev) => ({
-      ...prev,
-      like: data.likeCount, // 백엔드에서 내려주는 좋아요 수
-      liked: data.liked, // 하트 모양 변경을 위해 필요
-    }));
-  } catch (err) {
-    console.error("좋아요 실패:", err);
-  }
+    .catch((err) => {
+      console.error(err);
+      alert(err.message || "삭제 중 오류 발생");
+    });
 };
+
+
+  // 좋아요 토글
+    const handleLike = async () => {
+      try {
+        const data = await recipeApi.toggleLike(recipeId);
+        setRecipe((prev) => ({
+          ...prev,
+          like: data.likeCount,
+          liked: data.liked,
+        }));
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
 
 
