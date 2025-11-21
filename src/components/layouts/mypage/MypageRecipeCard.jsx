@@ -53,11 +53,19 @@ export default function MypageRecipeCard({ recipe = {}, scrapActive }) {
   // 기본 동작: 부모에서 onToggleScrap을 넘겨주면 사용, 없으면 내부에서 mutation 실행
   const scrapAddMutation = useMutation({
     mutationFn: (recipeId) => addUserScrappedRecipes(recipeId),
-    onSuccess: () => queryClient.invalidateQueries(["filteredRecipes"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["filteredRecipes"]);
+      queryClient.invalidateQueries(["userRecipes"]);
+      queryClient.invalidateQueries(["userScraps"]);
+    },
   });
   const scrapCancelMutation = useMutation({
     mutationFn: (recipeId) => cancelUserScrappedRecipe(recipeId),
-    onSuccess: () => queryClient.invalidateQueries(["filteredRecipes"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["filteredRecipes"]);
+      queryClient.invalidateQueries(["userRecipes"]);
+      queryClient.invalidateQueries(["userScraps"]);
+    },
   });
 
   const handleScrapClick = (e) => {
