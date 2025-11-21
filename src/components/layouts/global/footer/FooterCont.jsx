@@ -3,7 +3,7 @@ import {Link} from "react-router";
 export default function FooterCont() {
   const year = new Date().getFullYear();
   return (
-    <footer className="flex flex-col p-10 gap-5 bg-(--ck-subTxt-dark) text-(--ck-white)">
+    <footer className="relative z-40 flex flex-col p-10 gap-5 bg-(--ck-subTxt-dark) text-(--ck-white)">
       <div className="flex gap-10 items-center">
         <Link to="/" className="w-44">
           <img src="/images/logos/logo_3.png" alt="로고이미지" />

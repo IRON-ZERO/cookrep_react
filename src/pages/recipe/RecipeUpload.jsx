@@ -6,7 +6,6 @@ const RecipeUpload = () => {
   const navigate = useNavigate();
   const { data: userData } = useUser();
   const userId = userData.userId;
-  // const userId = "0c79275d-716f-4551-83ab-95265b648308"; // 테스트용
 
   const [title, setTitle] = useState("");
   const [peopleCount, setPeopleCount] = useState(0);
@@ -22,7 +21,7 @@ const RecipeUpload = () => {
 
   const [ingredients, setIngredients] = useState([]);
 
-  // 🔥 메인 이미지 미리보기 clean-up
+  // 메인 이미지 미리보기 clean-up
   useEffect(() => {
     if (!mainFile) return;
 
@@ -32,7 +31,7 @@ const RecipeUpload = () => {
     return () => URL.revokeObjectURL(previewUrl);
   }, [mainFile]);
 
-  // 🔥 단계 이미지 미리보기 clean-up
+  // 단계 이미지 미리보기 clean-up
   useEffect(() => {
     const urls = steps.map((s) => (s.file ? URL.createObjectURL(s.file) : null));
     setStepPreviews(urls);
@@ -173,9 +172,9 @@ const RecipeUpload = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-10">
+    <div className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-52 mb-11">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-        🍽 레시피 작성
+        레시피 작성
       </h2>
 
       <form
@@ -251,7 +250,7 @@ const RecipeUpload = () => {
 
           {mainFile && (
             <p className="mt-3 text-center text-sm text-gray-600">
-              ✅ 선택된 파일: {mainFile.name}
+              선택된 파일: {mainFile.name}
             </p>
           )}
         </div>
@@ -259,7 +258,7 @@ const RecipeUpload = () => {
         {/* 기본 정보 */}
         <div>
           <label className="block text-xl font-extrabold mb-2 text-gray-700">
-            👥 인원 수 / ⏱ 준비시간 / 🍳 조리시간 / 🍽 칼로리(kcal)
+            인원 수 / 준비시간 / 조리시간 / 칼로리(kcal)
           </label>
           <div className="grid grid-cols-4 gap-4">
             <input
@@ -296,7 +295,7 @@ const RecipeUpload = () => {
         {/* 재료 */}
         <div>
           <h3 className="text-xl font-extrabold mb-2 text-gray-700">
-            🧂 사용된 재료
+            사용된 재료
           </h3>
           <div className="space-y-3">
             {ingredients.map((ing, idx) => (
@@ -322,9 +321,9 @@ const RecipeUpload = () => {
                 <button
                   type="button"
                   onClick={() => deleteIngredient(idx)}
-                  className="text-red-500 text-lg"
+                  className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition"
                 >
-                  ❌
+                  삭제
                 </button>
               </div>
             ))}
@@ -341,7 +340,7 @@ const RecipeUpload = () => {
         {/* 조리 단계 */}
         <div>
           <h3 className="text-xl font-extrabold mb-2 text-gray-700">
-            🍳 조리 단계
+            조리 단계
           </h3>
           <div className="space-y-4">
             {steps.map((step, idx) => (
@@ -394,9 +393,8 @@ const RecipeUpload = () => {
                 <button
                   type="button"
                   onClick={() => deleteStep(idx)}
-                  className="text-red-500 text-lg"
-                >
-                  ❌ 단계 삭제
+                  className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
+                  단계 삭제
                 </button>
               </div>
             ))}

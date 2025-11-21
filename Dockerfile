@@ -1,5 +1,5 @@
 # Node.js 환경에서 React 빌드
-FROM node:18 AS build
+FROM node:22 AS build
 WORKDIR /app
 
 # 환경 변수 ARG로 전달받기

@@ -13,6 +13,7 @@ import Fridge from "./pages/mypage/Fridge";
 import Freezer from "./pages/mypage/Freezer";
 import MyRecipes from "./pages/mypage/MyRecipes";
 import Main from "./pages/Main";
+import Main from "./pages/Main";
 
 const checkAuth = async () => {
   try {
@@ -46,10 +47,6 @@ export const router = createBrowserRouter([
         path: "/upload",
         element: <RecipeUpload />,
       },
-      // {
-      //   path: "/mypage/recipes",
-      //   element: <RecipeList />,
-      // },
       {
         path: "/mypage/recipe/:recipeId",
         element: <RecipeDetail />,
