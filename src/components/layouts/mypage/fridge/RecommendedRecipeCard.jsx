@@ -124,7 +124,7 @@ export default function RecommendedRecipeCard({
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              aria-hidden
+              aria-hidden="true"
             >
               <path
                 d="M12 5C7 5 3 8 1 12c2 4 6 7 11 7s9-3 11-7c-2-4-6-7-11-7z"
