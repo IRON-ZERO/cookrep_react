@@ -5,18 +5,20 @@ export default function IngredientControls({
   onSelectAll,
 }) {
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-2">
       <button
-        className="px-3 py-1 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 transition"
         onClick={onAdd}
+        className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium text-sm"
       >
-        재료 추가
+        + 재료 추가
       </button>
       <button
-        className="px-3 py-1 bg-gray-500 text-white rounded cursor-pointer hover:bg-gray-600 transition"
         onClick={onSelectAll}
+        className="px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition font-medium text-sm"
       >
-        {activeCount === ingredientCount ? "전체 해제" : "전체 선택"}
+        {activeCount === ingredientCount && ingredientCount > 0
+          ? "전체 해제"
+          : "전체 선택"}
       </button>
     </div>
   );

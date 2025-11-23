@@ -3,6 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import {getUserDetail} from "../../apis/user/userApi";
 import MypageSidebar from "../../components/layouts/mypage/MypageSidebar";
 import footer from "../../components/layouts/global/footer/FooterCont";
+import ScrollToTop from "../../components/layouts/mypage/ScrollToTop";
 
 export default function Mypage() {
   const {
@@ -22,6 +23,7 @@ export default function Mypage() {
       <div className="flex">
         <MypageSidebar user={user} />
         <div className="flex-1 p-10">
+          <ScrollToTop />
           <Outlet context={{user}} />
         </div>
       </div>
