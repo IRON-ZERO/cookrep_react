@@ -7,7 +7,7 @@ export default function useLoginMutation() {
   const {mutate} = useMutation({
     mutationKey: ["loginUser"],
     mutationFn: authApi.login,
-    onSuccess: (data) => {
+    onSuccess: () => {
       navigate("/");
     },
     onError: async (error) => {

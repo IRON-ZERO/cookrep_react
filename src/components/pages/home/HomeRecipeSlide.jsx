@@ -18,6 +18,20 @@ export default function HomeRecipeSlide() {
     end: 20,
   });
 
+  //   const move = useCallback((direction) => {
+  //   const itemWidth = 200;
+  //   const itemGap = 12;
+  //   if (!sliderRef.current) return;
+  //   const slideWidth = itemWidth + itemGap;
+  //   const maxPosition = (data?.length - 1) * slideWidth; // 동적으로 계산
+  //   setXPosition((prev) => {
+  //     if (direction === "left") {
+  //       return prev <= 0 ? maxPosition : prev - slideWidth;
+  //     } else {
+  //       return prev >= maxPosition ? 0 : prev + slideWidth;
+  //     }
+  //   });
+  // }, [data?.length]);
   const move = useCallback((direction) => {
     const itemWidth = 200;
     const itemGap = 12;
@@ -40,7 +54,11 @@ export default function HomeRecipeSlide() {
      "
     >
       {isSuccess && (
-        <button className="-left-10" onClick={() => move("left")}>
+        <button
+          className="-left-10"
+          onClick={() => move("left")}
+          aria-label="이전 레시피 보기"
+        >
           <ChevronLeftIcon className="size-30 text-(--ck-red)" />
         </button>
       )}
@@ -54,7 +72,7 @@ export default function HomeRecipeSlide() {
           {isSuccess &&
             data.map((r, index) => (
               <HomeSlider
-                key={r.RCP_NM}
+                key={r.RCP_SEQ}
                 data={r}
                 index={index + 1}
                 onClick={setRecipeId}
@@ -70,7 +88,11 @@ export default function HomeRecipeSlide() {
         )}
       </div>
       {isSuccess && (
-        <button className="-right-15" onClick={() => move("right")}>
+        <button
+          className="-right-15"
+          onClick={() => move("right")}
+          aria-label="다음 레시피 보기"
+        >
           <ChevronRightIcon className="size-30 text-(--ck-red)" />
         </button>
       )}

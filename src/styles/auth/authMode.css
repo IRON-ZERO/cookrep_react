@@ -5,5 +5,5 @@
   @apply before:translate-y-0 sm:before:translate-x-0;
 }
 .authMode_email {
-  @apply before:translate-y-full before:sm:translate-y-0 sm:before:translate-x-full;
+  @apply before:translate-y-full sm:before:translate-y-0 sm:before:translate-x-full;
 }

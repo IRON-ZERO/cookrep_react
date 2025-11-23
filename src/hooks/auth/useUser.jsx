@@ -14,13 +14,16 @@ export default function useUser() {
     queryKey: ["loggedInUser"],
     queryFn: authApi.loggedIn,
     initialData: () => {
-      return JSON.parse(localStorage.getItem("loggedInUser") || "null");
+      try {
+        return JSON.parse(sessionStorage.getItem("loggedInUser") || "null");
+      } catch {
+        return null;
+      }
     },
   });
   useEffect(() => {
-    console.log(data);
     if (isSuccess && data) {
-      localStorage.setItem("loggedInUser", JSON.stringify(data));
+      sessionStorage.setItem("loggedInUser", JSON.stringify(data));
     }
   }, [isSuccess, data]);
 

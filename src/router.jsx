@@ -18,7 +18,7 @@ const checkAuth = async () => {
   try {
     const user = await authApi.loggedIn();
     return !!user;
-  } catch (err) {
+  } catch {
     return false;
   }
 };
