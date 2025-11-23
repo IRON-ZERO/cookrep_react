@@ -47,7 +47,7 @@ export default function JoinForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="*:flex *:flex-col *:gap-3 w-[500px]"
+      className="*:flex *:flex-col *:gap-3 w-full sm:w-[500px]"
     >
       <fieldset>
         <legend>회원가입</legend>

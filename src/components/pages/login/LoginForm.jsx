@@ -38,7 +38,7 @@ export default function LoginForm({authMode}) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="*:flex *:flex-col *:gap-3 w-80"
+      className="*:flex *:flex-col *:gap-3 w-full sm:w-80"
     >
       <fieldset>
         <legend>로그인</legend>

@@ -15,6 +15,9 @@ export const openApi = {
     if (!response.ok) {
       throw new Error("외부API를 불러오는데 실패하였습니다.");
     }
+    if (data.length <= 0) {
+      throw new Error("외부API를 불러오는데 실패하였습니다.");
+    }
     return data;
   },
   getOpenAPIRecipeListDesc: async ({start, end}) => {
@@ -30,6 +33,9 @@ export const openApi = {
     );
     const data = await response.json();
     if (!response.ok) {
+      throw new Error("외부API를 불러오는데 실패하였습니다.");
+    }
+    if (data.length <= 0) {
       throw new Error("외부API를 불러오는데 실패하였습니다.");
     }
     return data;

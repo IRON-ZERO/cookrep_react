@@ -1,11 +1,15 @@
-import { Outlet } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getUserDetail } from "../../apis/user/userApi";
+import {Outlet} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import {getUserDetail} from "../../apis/user/userApi";
 import MypageSidebar from "../../components/layouts/mypage/MypageSidebar";
 import footer from "../../components/layouts/global/footer/FooterCont";
 
 export default function Mypage() {
-  const { data: user, isLoading, error } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["userDetail"],
     queryFn: getUserDetail,
   });
@@ -15,15 +19,13 @@ export default function Mypage() {
   if (!user) return <div>유저 정보가 없습니다.</div>;
   return (
     <div className="flex flex-col">
-    <div className="flex">
-      <MypageSidebar user={user} />
-      <div className="flex-1 p-10">
-        <Outlet context={{ user }} />
+      <div className="flex">
+        <MypageSidebar user={user} />
+        <div className="flex-1 p-10">
+          <Outlet context={{user}} />
+        </div>
       </div>
-    </div>
-    <div>
-      {footer()}
-    </div>
+      <div>{footer()}</div>
     </div>
   );
 }

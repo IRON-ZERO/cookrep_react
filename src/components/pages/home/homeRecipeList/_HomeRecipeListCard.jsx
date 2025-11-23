@@ -7,7 +7,7 @@ const HomeRecipeListCard = React.memo(function HomeRecipeListCard({
 }) {
   return (
     <li
-      className="flex relative overflow-hidden rounded-md shadow-md w-full h-[500px] cursor-pointer"
+      className="flex relative overflow-hidden rounded-md shadow-md w-full cursor-pointer min-w-[200px] max-h-[300px] group"
       onClick={() => setModal(recipe.RCP_SEQ)}
     >
       <CookTypeBadge
@@ -16,8 +16,8 @@ const HomeRecipeListCard = React.memo(function HomeRecipeListCard({
         classNames="top-6 left-6"
       />
       <h3
-        className={`absolute right-6 bottom-6 z-40 text-3xl font-bold text-(--ck-white) text-right ${
-          recipe.RCP_NM.length > 18 ? "w-80" : "w-96"
+        className={`absolute right-6 bottom-6 z-30 font-bold text-(--ck-white) text-right text-xs sm:text-sm truncate overflow-hidden ${
+          recipe.RCP_NM.length > 10 ? "w-52" : "w-60"
         }`}
       >
         {recipe.RCP_NM}
@@ -25,7 +25,7 @@ const HomeRecipeListCard = React.memo(function HomeRecipeListCard({
       <img
         src={recipe.ATT_FILE_NO_MAIN}
         alt={recipe.RCP_SEQ}
-        className="size-full brightness-50"
+        className="size-full brightness-60"
         loading="lazy"
       />
     </li>

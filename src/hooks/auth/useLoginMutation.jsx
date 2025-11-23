@@ -8,7 +8,6 @@ export default function useLoginMutation() {
     mutationKey: ["loginUser"],
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      console.log(data);
       navigate("/");
     },
     onError: async (error) => {
