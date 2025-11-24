@@ -5,10 +5,9 @@ import {SearchRecipeBadgeInfo} from "./SearchRecipeBadge";
 
 export default function SearchRecipe() {
   const [title, setTitle] = useState("");
-  const {data, isError, isPending, isSuccess, isLoading, refetch} =
-    useSearchRecipe({
-      title,
-    });
+  const {data, isError, isPending, isSuccess, refetch} = useSearchRecipe({
+    title,
+  });
   console.log(data);
   useEffect(() => {
     refetch();
@@ -33,7 +32,6 @@ export default function SearchRecipe() {
         />
       </form>
       {isPending && <p className="text-xl">불러오는 중 입니다.</p>}
-      {isLoading && <p className="text-xl">불러오는 중 입니다.</p>}
       {isSuccess && (
         <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-3 place-items-center-safe ">
           <SearchRecipeCard recipe={data} />

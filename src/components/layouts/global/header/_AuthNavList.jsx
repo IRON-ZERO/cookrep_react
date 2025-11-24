@@ -16,7 +16,7 @@ export default function AuthNavList() {
             <li>
               <Link
                 to={"/mypage"}
-                className="size-7 overflow-hidden block rounded-full"
+                className="size-5 overflow-hidden block rounded-full"
               >
                 <img src="/images/icons/user-color.png" alt="아바타이미지" />
               </Link>
