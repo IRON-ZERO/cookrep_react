@@ -13,24 +13,36 @@ export default function RecipeDetail() {
   const [isOwner, setIsOwner] = useState(false);
 
   // 레시피 불러오기
-    useEffect(() => {
-      recipeApi.getRecipe(recipeId)
-        .then((data) => {
-          setRecipe({ ...data, liked: data.liked, like: data.like });
-          setIsOwner(data.owner);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
-    }, [recipeId]);
 
+useEffect(() => {
+  const fetchRecipe = async () => {
+    setLoading(true);
+    try {
+      // 1️⃣ 레시피 상세 조회 먼저
+      const data = await recipeApi.getRecipeDetail(recipeId);
+
+      // 2️⃣ 조회수 증가 (POST) → 반환값 반영
+      const updatedViews = await recipeApi.increaseView(recipeId);
+
+      // 3️⃣ 레시피 데이터 + 최신 조회수 반영
+      setRecipe({ ...data, views: updatedViews });
+      setIsOwner(data.owner);
+    } catch (err) {
+      console.error(err);
+      alert("레시피를 불러오는 중 오류가 발생했습니다.");
+      navigate("/"); // 또는 이전 페이지로 이동
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRecipe();
+}, [recipeId]);
 
   // 삭제
     const deleteRecipe = () => {
   if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
+      
   recipeApi.deleteRecipe(recipeId)
     .then(() => {
       alert("삭제 완료!");
@@ -42,8 +54,7 @@ export default function RecipeDetail() {
     });
 };
 
-
-  // 좋아요 토글
+ // 좋아요 토글
     const handleLike = async () => {
       try {
         const data = await recipeApi.toggleLike(recipeId);
@@ -56,8 +67,7 @@ export default function RecipeDetail() {
         console.error(err);
       }
     };
-
-
+  
 
   if (loading) return <p>로딩 중...</p>;
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
@@ -94,7 +104,7 @@ export default function RecipeDetail() {
             칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
           </p>
           </div>
-          <ViewsCounter recipeId={recipeId} />
+          <ViewsCounter recipe={recipe} />
 
       </div>
 
