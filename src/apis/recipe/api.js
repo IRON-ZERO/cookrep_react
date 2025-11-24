@@ -48,8 +48,8 @@ export const recipeApi = {
       console.log(await res.json());
 
       if (!res.ok) throw new Error("조회수 증가 실패");
-      return (await res.json()).views; // { views: 123 } 반환
-    } catch (err) {
+      const data = await res.json(); // 한 번만 읽기
+      return data.views;    } catch (err) {
       console.error(err);
       return 0;
     }

@@ -16,31 +16,29 @@ export default function RecipeDetail() {
 
 useEffect(() => {
   const fetchRecipe = async () => {
-    setLoading(true);
-    try {
-      const data = await recipeApi.getRecipeDetail(recipeId);
-      setRecipe({ ...data, views: data.views });
-      setIsOwner(data.owner);
+  setLoading(true);
+  try {
+    const data = await recipeApi.getRecipeDetail(recipeId);
 
-      const sessionKey = `viewed_recipe_${recipeId}`;
-      console.log(sessionStorage.getItem(sessionKey));
-
-      if (!sessionStorage.getItem(sessionKey)) {
-        const updatedViews = await recipeApi.increaseView(recipeId); // number 반환
-         console.log(updatedViews);
-        if (updatedViews && typeof updatedViews === "number") {
-          setRecipe(prev => ({ ...prev, views: updatedViews }));
-        }
-        sessionStorage.setItem(sessionKey, "1");
-      }
-     
-    } catch (err) {
-      console.error(err);
-      navigate("/");
-    } finally {
-      setLoading(false);
+    // 세션 체크 후 조회수 증가
+    const sessionKey = `viewed_recipe_${recipeId}`;
+    let updatedViews = data.views;
+    if (!sessionStorage.getItem(sessionKey)) {
+      const newViews = await recipeApi.increaseView(recipeId);
+      if (typeof newViews === "number") updatedViews = newViews;
+      sessionStorage.setItem(sessionKey, "1");
     }
-  };
+
+    setRecipe({ ...data, views: updatedViews });
+    setIsOwner(data.owner);
+  } catch (err) {
+    console.error(err);
+    navigate("/");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   fetchRecipe();
 }, [recipeId, navigate]);
