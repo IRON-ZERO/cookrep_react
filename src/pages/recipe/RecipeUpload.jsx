@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import useUser from "../../hooks/auth/useUser";
+import {recipeApi} from "../../apis/recipe/api";
 
 const RecipeUpload = () => {
   const navigate = useNavigate();
-  const { data: userData } = useUser();
+  const {data: userData} = useUser();
   const userId = userData.userId;
 
   const [title, setTitle] = useState("");
@@ -33,7 +34,9 @@ const RecipeUpload = () => {
 
   // 단계 이미지 미리보기 clean-up
   useEffect(() => {
-    const urls = steps.map((s) => (s.file ? URL.createObjectURL(s.file) : null));
+    const urls = steps.map((s) =>
+      s.file ? URL.createObjectURL(s.file) : null
+    );
     setStepPreviews(urls);
 
     return () => urls.forEach((u) => u && URL.revokeObjectURL(u));
@@ -41,14 +44,14 @@ const RecipeUpload = () => {
 
   // 단계 추가
   const addStep = () => {
-    setSteps([...steps, { content: "", file: null }]);
+    setSteps([...steps, {content: "", file: null}]);
   };
 
   // 단계 삭제
   const deleteStep = (index) => {
     const newSteps = steps
       .filter((_, i) => i !== index)
-      .map((step, i) => ({ ...step, stepOrder: i + 1 }));
+      .map((step, i) => ({...step, stepOrder: i + 1}));
     setSteps(newSteps);
   };
 
@@ -61,7 +64,7 @@ const RecipeUpload = () => {
 
   // 재료 추가
   const addIngredient = () => {
-    setIngredients([...ingredients, { name: "", count: "" }]);
+    setIngredients([...ingredients, {name: "", count: ""}]);
   };
 
   const deleteIngredient = (index) => {
@@ -95,19 +98,8 @@ const RecipeUpload = () => {
         }
       });
 
-      const presignResp = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(fileNames),
-        }
-      );
-
-      if (!presignResp.ok) return alert("S3 presigned URL 생성 실패!");
-
-      const presignData = await presignResp.json();
+      // 1️⃣ presigned URL 요청
+      const presignData = await recipeApi.getPresignedUrls(fileNames);
 
       for (let i = 0; i < presignData.length; i++) {
         const fileObj = presignData[i];
@@ -116,7 +108,7 @@ const RecipeUpload = () => {
         else file = steps[i - 1]?.file;
 
         if (file) {
-          await fetch(fileObj.uploadUrl, { method: "PUT", body: file });
+          await fetch(fileObj.uploadUrl, {method: "PUT", body: file});
         }
       }
 
@@ -149,19 +141,8 @@ const RecipeUpload = () => {
         steps: stepsData,
       };
 
-      const registerResp = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/recipe/${userId}`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(recipeData),
-        }
-      );
-
-      if (!registerResp.ok) return alert("레시피 등록 실패!");
-
-      const result = await registerResp.json();
+      // 4️⃣ 레시피 등록 API 호출
+      const result = await recipeApi.postRecipe(userId, recipeData);
       alert("레시피 등록 완료!");
 
       if (result.recipeId) navigate(`/mypage/recipe/${result.recipeId}`);
@@ -393,7 +374,8 @@ const RecipeUpload = () => {
                 <button
                   type="button"
                   onClick={() => deleteStep(idx)}
-                  className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
+                  className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition"
+                >
                   단계 삭제
                 </button>
               </div>

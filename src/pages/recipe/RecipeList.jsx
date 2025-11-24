@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import {recipeApi} from "../../apis/recipe/api";
 
 export default function MyRecipeList() {
   // 임시 테스트용 userId
@@ -9,12 +10,11 @@ export default function MyRecipeList() {
 
   // ✅ 레시피 목록 불러오기
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/user/${userId}`,{credentials: "include",}) // 백엔드 포트 맞춰주세요
-      .then((res) => res.json())
-      .then((data) => {
-        setRecipes(data || []); // data 자체가 배열임
-      })
-      .catch((err) => console.error("레시피 목록 불러오기 오류:", err));
+    const fetchRecipes = async () => {
+      const data = await recipeApi.getUserRecipes(userId);
+      setRecipes(data || []);
+    };
+    fetchRecipes();
   }, [userId]);
 
   return (
@@ -54,13 +54,13 @@ export default function MyRecipeList() {
                   <img
                     src={recipe.thumbnailImageUrl}
                     alt={recipe.title}
-                    style={{ width: "100%", height: "160px", objectFit: "cover" }}
+                    style={{width: "100%", height: "160px", objectFit: "cover"}}
                   />
-                  <div style={{ padding: "1rem" }}>
-                    <h4 style={{ marginBottom: "0.5rem" }}>{recipe.title}</h4>
+                  <div style={{padding: "1rem"}}>
+                    <h4 style={{marginBottom: "0.5rem"}}>{recipe.title}</h4>
                     <div
                       className="meta"
-                      style={{ fontSize: "0.9rem", color: "#666" }}
+                      style={{fontSize: "0.9rem", color: "#666"}}
                     >
                       <span className="views">조회수 {recipe.views}</span> ·{" "}
                       <span className="likes">좋아요 {recipe.likeCount}</span>
