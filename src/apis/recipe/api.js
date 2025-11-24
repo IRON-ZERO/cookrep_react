@@ -1,6 +1,6 @@
 import {BASE_URL} from "../baseUrl";
 export const recipeApi = {
-  getRecipeList: async (title = "") => {
+  getRecipeListBySearch: async (title = "") => {
     const url = title.trim()
       ? `${BASE_URL}/recipe/search/bytitle/${encodeURIComponent(title)}`
       : `${BASE_URL}/recipe/search/bytitle`;
