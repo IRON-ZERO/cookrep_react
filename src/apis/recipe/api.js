@@ -5,20 +5,20 @@ export const recipeApi = {
 
 
     // S3 presigned URL 요청
-  getPresignedUrls: async (fileNames) => {
-    const resp = await fetch(`${BASE_URL}/recipe/presigned`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fileNames),
-    });
+  // getPresignedUrls: async (fileNames) => {
+  //   const resp = await fetch(`${BASE_URL}/recipe/presigned`, {
+  //     method: "POST",
+  //     credentials: "include",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(fileNames),
+  //   });
 
-    if (!resp.ok) {
-      throw new Error("S3 presigned URL 생성 실패!");
-    }
+  //   if (!resp.ok) {
+  //     throw new Error("S3 presigned URL 생성 실패!");
+  //   }
 
-    return resp.json(); // [{ uploadUrl, key }, ...]
-  },
+  //   return resp.json(); // [{ uploadUrl, key }, ...]
+  // },
 
   // 레시피 등록
   postRecipe: async (userId, recipeData) => {
@@ -213,7 +213,5 @@ export const recipeApi = {
       throw err;
     }
   },
-
-
-  
+ 
 };
