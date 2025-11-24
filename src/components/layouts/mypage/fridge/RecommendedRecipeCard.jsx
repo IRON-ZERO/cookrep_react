@@ -29,8 +29,8 @@ export default function RecommendedRecipeCard({
       ? recipe.peopleCount
       : recipe.servings ?? 0;
   const likeCount =
-    typeof recipe.likeCount === "number"
-      ? recipe.likeCount
+    typeof recipe.likesCount === "number"
+      ? recipe.likesCount
       : typeof recipe.likes === "number"
       ? recipe.likes
       : recipe.like_count ?? 0;

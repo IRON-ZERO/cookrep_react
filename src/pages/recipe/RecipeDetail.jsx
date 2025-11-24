@@ -1,90 +1,77 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import Comment from "../../components/aboutrecipe/Comment";
 import ViewsCounter from "../../components/aboutrecipe/ViewCounter";
-
+import {recipeApi} from "../../apis/recipe/api";
 export default function RecipeDetail() {
-  const { recipeId } = useParams();
+  const {recipeId} = useParams();
   const navigate = useNavigate();
 
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
 
+  // 레시피 불러오기
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
-        return res.json();
-      })
-      .then((data) => {
-        setRecipe({
-          ...data,
-          liked: data.liked, // 백엔드에서 이미 좋아요 여부 내려줌
-          like: data.like,   // 좋아요 수
-        });
+    const fetchRecipe = async () => {
+      setLoading(true);
+      try {
+        const data = await recipeApi.getRecipeDetail(recipeId);
+
+        // 세션 체크 후 조회수 증가
+        const sessionKey = `viewed_recipe_${recipeId}`;
+        let updatedViews = data.views;
+        if (!sessionStorage.getItem(sessionKey)) {
+          const newViews = await recipeApi.increaseView(recipeId);
+          if (typeof newViews === "number" && newViews > 0)
+            updatedViews = newViews;
+          sessionStorage.setItem(sessionKey, "1");
+        }
+
+        setRecipe({...data, views: updatedViews});
         setIsOwner(data.owner);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
+        navigate("/");
+      } finally {
         setLoading(false);
-      });
-  }, [recipeId]);
+      }
+    };
 
+    fetchRecipe();
+  }, [recipeId, navigate]);
 
+  // 삭제
   const deleteRecipe = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
-      method: "DELETE",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          alert("삭제 완료!");
-          navigate("/mypage/recipes");
-        } else {
-          alert("삭제 실패");
-        }
+    recipeApi
+      .deleteRecipe(recipeId)
+      .then(() => {
+        alert("삭제 완료!");
+        navigate("/mypage/recipes");
       })
       .catch((err) => {
         console.error(err);
-        alert("삭제 중 오류 발생");
+        alert(err.message || "삭제 중 오류 발생");
       });
   };
 
-const handleLike = async () => {
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/recipe/like/${recipeId}`, // recipeId 포함
-      {
-        method: "POST",
-        credentials: "include", // 세션 쿠키 포함
-      }
-    );
-
-    if (!res.ok) {
-      const text = await res.text(); // JSON이 아닌 경우 처리
-      console.error("좋아요 실패:", res.status, text);
-      return;
+  // 좋아요 토글
+  const handleLike = async () => {
+    try {
+      const data = await recipeApi.toggleLike(recipeId);
+      setRecipe((prev) => ({
+        ...prev,
+        like: data.likeCount,
+        liked: data.liked,
+      }));
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
     }
-
-    const data = await res.json();
-
-    setRecipe((prev) => ({
-      ...prev,
-      like: data.likeCount, // 백엔드에서 내려주는 좋아요 수
-      liked: data.liked, // 하트 모양 변경을 위해 필요
-    }));
-  } catch (err) {
-    console.error("좋아요 실패:", err);
-  }
-};
-
-
+  };
 
   if (loading) return <p>로딩 중...</p>;
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
@@ -115,14 +102,14 @@ const handleLike = async () => {
             조리시간: <span className="font-semibold">{recipe.cookTime}</span>분
           </p>
           <p>
-            인원 수: <span className="font-semibold">{recipe.peopleCount}</span>명
+            인원 수: <span className="font-semibold">{recipe.peopleCount}</span>
+            명
           </p>
           <p>
             칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
           </p>
-          </div>
-          <ViewsCounter recipeId={recipeId} />
-
+        </div>
+        <ViewsCounter recipe={recipe} />
       </div>
 
       {/* 재료 */}
@@ -156,7 +143,9 @@ const handleLike = async () => {
                   <p className="font-semibold text-orange-600 mb-2">
                     Step {step.stepOrder}
                   </p>
-                  <p className="text-gray-700 leading-relaxed">{step.contents}</p>
+                  <p className="text-gray-700 leading-relaxed">
+                    {step.contents}
+                  </p>
                 </div>
                 {step.imageUrl && (
                   <img
@@ -182,27 +171,27 @@ const handleLike = async () => {
           목록으로
         </button>
 
-         {isOwner && (
-    <>
-      {/* 수정 버튼 */}
-      <button
-        type="button"
-        onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
-        className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition shadow-sm"
-      >
-        수정
-      </button>
+        {isOwner && (
+          <>
+            {/* 수정 버튼 */}
+            <button
+              type="button"
+              onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
+              className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition shadow-sm"
+            >
+              수정
+            </button>
 
-      {/* 삭제 버튼 */}
-      <button
-        type="button"
-        onClick={deleteRecipe}
-        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition shadow-sm"
-      >
-        삭제
-      </button>
-    </>
-  )}
+            {/* 삭제 버튼 */}
+            <button
+              type="button"
+              onClick={deleteRecipe}
+              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition shadow-sm"
+            >
+              삭제
+            </button>
+          </>
+        )}
       </div>
 
       {/* 좋아요 버튼 */}
@@ -216,13 +205,13 @@ const handleLike = async () => {
           ) : (
             <span className="text-gray-400 text-2xl">🤍</span> // 좋아요 X
           )}
-          <span className="text-lg font-semibold text-red-500">{recipe.like}</span>
+          <span className="text-lg font-semibold text-red-500">
+            {recipe.like}
+          </span>
         </button>
-
       </div>
 
       <Comment recipeId={recipeId} />
     </div>
-    
   );
 }

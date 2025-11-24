@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import useUser from "../../hooks/auth/useUser";
+import {recipeApi} from "../../apis/recipe/api";
 
-export default function Comment({ recipeId }) {
+export default function Comment({recipeId}) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const { data: userData } = useUser();
+  const {data: userData} = useUser();
   const userId = userData?.userId;
   const nickname = userData?.userName;
 
@@ -13,9 +14,12 @@ export default function Comment({ recipeId }) {
 
   // 댓글 불러오기
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/recipe/${recipeId}`, {
-      credentials: "include",
-    })
+    fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/comment/recipe/${recipeId}`,
+      {
+        credentials: "include",
+      }
+    )
       .then((res) => {
         if (!res.ok) throw new Error("댓글을 불러오지 못했습니다.");
         return res.json();
@@ -31,19 +35,18 @@ export default function Comment({ recipeId }) {
       return;
     }
 
-
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment`, {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipeId, contents: newComment, userId }),
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({recipeId, contents: newComment, userId}),
     })
       .then((res) => {
         if (!res.ok) throw new Error("댓글 작성에 실패했습니다.");
         return res.json();
       })
       .then((saved) => {
-        setComments((prev) => [...prev, { ...saved, owner: true }]);
+        setComments((prev) => [...prev, {...saved, owner: true}]);
         setNewComment("");
       })
       .catch((err) => {
@@ -53,25 +56,13 @@ export default function Comment({ recipeId }) {
   };
 
   // 댓글 삭제
-  const deleteComment = (commentId) => {
+  const deleteComment = async (commentId) => {
     if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
-
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${commentId}`, {
-      method: "DELETE",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          setComments((prev) => prev.filter((c) => c.commentId !== commentId));
-          alert("댓글이 삭제되었습니다.");
-        } else {
-          alert("댓글 삭제에 실패했습니다.");
-        }
-      })
-      .catch((err) => {
-        console.error("댓글 삭제 오류:", err);
-        alert("댓글 삭제 중 오류가 발생했습니다.");
-      });
+    const ok = await recipeApi.deleteComment(commentId);
+    if (ok) {
+      setComments((prev) => prev.filter((c) => c.commentId !== commentId));
+      alert("댓글이 삭제되었습니다.");
+    } else alert("댓글 삭제 실패");
   };
 
   // 댓글 수정
@@ -84,8 +75,8 @@ export default function Comment({ recipeId }) {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comment/${commentId}`, {
       method: "PUT",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: editingCommentText, userId }),
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({contents: editingCommentText, userId}),
     })
       .then((res) => {
         if (!res.ok) throw new Error("댓글 수정에 실패했습니다.");
@@ -94,7 +85,7 @@ export default function Comment({ recipeId }) {
       .then((updated) => {
         setComments((prev) =>
           prev.map((c) =>
-            c.commentId === commentId ? { ...c, contents: editingCommentText } : c
+            c.commentId === commentId ? {...c, contents: editingCommentText} : c
           )
         );
         setEditingCommentId(null);
