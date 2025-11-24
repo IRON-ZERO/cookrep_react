@@ -24,9 +24,13 @@ export default function Comment({ recipeId }) {
   // 댓글 작성
   const writeComment = async () => {
     if (!newComment.trim()) return alert("댓글 내용을 입력해주세요.");
-    const saved = await recipeApi.createComment({ recipeId, contents: newComment, userId });
+    const saved = await recipeApi.createComment({
+      recipeId,
+      contents: newComment,
+      userId,
+    });
     if (saved) {
-      setComments((prev) => [...prev, { ...saved, owner: true }]);
+      setComments((prev) => [...prev, {...saved, owner: true}]);
       setNewComment("");
     } else alert("댓글 작성 실패");
   };
