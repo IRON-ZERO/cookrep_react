@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 
 export default function ViewsCounter({ recipe }) {
-  const [views, setViews] = useState(0);
+  // const [views, setViews] = useState(0);
 
-  useEffect(() => {
-    if (recipe && recipe.views !== undefined) {
-      setViews(recipe.views);
-    }
-  }, [recipe]);
+  // useEffect(() => {
+  //   if (recipe && recipe.views !== undefined) {
+  //     setViews(recipe.views);
+  //   }
+  // }, [recipe]);
 
   return (
     <div className="text-center mt-2 text-gray-600">
-      🔥 조회수 {views}
+      🔥 조회수 {recipe.views}
     </div>
   );
 }

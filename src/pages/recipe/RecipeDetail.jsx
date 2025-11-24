@@ -23,13 +23,17 @@ useEffect(() => {
       setIsOwner(data.owner);
 
       const sessionKey = `viewed_recipe_${recipeId}`;
+      console.log(sessionStorage.getItem(sessionKey));
+
       if (!sessionStorage.getItem(sessionKey)) {
         const updatedViews = await recipeApi.increaseView(recipeId); // number 반환
+         console.log(updatedViews);
         if (updatedViews && typeof updatedViews === "number") {
           setRecipe(prev => ({ ...prev, views: updatedViews }));
         }
         sessionStorage.setItem(sessionKey, "1");
       }
+     
     } catch (err) {
       console.error(err);
       navigate("/");
