@@ -12,15 +12,15 @@ export default function SearchRecipeCard({recipe}) {
         className="flex flex-col w-full h-full *:absolute *:text-(--ck-white)"
       >
         <h3
-          className={`"absolute z-30 bottom-6 right-6 text-2xl truncate group-hover:translate-y-[300%] ${
+          className={`absolute z-30 bottom-6 right-6 text-2xl truncate group-hover:translate-y-[300%] ${
             val.title.length > 10 ? "w-52" : ""
-          } text-right"`}
+          } text-right`}
         >
           {val.title}
         </h3>
         <img
           src={val.thumbnailImageUrl}
-          alt={val.title}
+          alt={`${val.title} 레시피 썸네일 이미지`}
           className="w-full h-full brightness-65 group-hover:brightness-100 left-0 top-0"
         />
         <SearchRecipeBadge

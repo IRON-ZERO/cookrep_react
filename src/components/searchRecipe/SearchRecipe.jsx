@@ -1,17 +1,14 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import useSearchRecipe from "../../hooks/recipe/useSearchRecipe";
 import SearchRecipeCard from "./SearchRecipeCard";
 import {SearchRecipeBadgeInfo} from "./SearchRecipeBadge";
 
 export default function SearchRecipe() {
   const [title, setTitle] = useState("");
-  const {data, isError, isPending, isSuccess, refetch} = useSearchRecipe({
+  const {data, isError, isPending, isSuccess} = useSearchRecipe({
     title,
   });
-  console.log(data);
-  useEffect(() => {
-    refetch();
-  }, [refetch, title]);
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
@@ -25,7 +22,7 @@ export default function SearchRecipe() {
       >
         <input
           type="text"
-          placeholder="hoho"
+          placeholder="레시피 이름을 검색해 보세요."
           onChange={(e) => setTitle(e.target.value)}
           value={title}
           className="px-2 py-1 focus:px-5 focus:py-6 w-full rounded-md border border-(--ck-subTxt) bg-(--ck-white) transition-[padding] duration-300 ease-in-out"
@@ -34,7 +31,13 @@ export default function SearchRecipe() {
       {isPending && <p className="text-xl">불러오는 중 입니다.</p>}
       {isSuccess && (
         <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-3 place-items-center-safe ">
-          <SearchRecipeCard recipe={data} />
+          {Array.isArray(data) && data.length === 0 ? (
+            <li className="col-span-full text-xl text-center py-8">
+              검색 결과가 없습니다.
+            </li>
+          ) : (
+            <SearchRecipeCard recipe={data} />
+          )}
         </ul>
       )}
       {isError && (
