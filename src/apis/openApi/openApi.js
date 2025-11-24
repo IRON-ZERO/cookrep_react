@@ -1,11 +1,12 @@
-import {BASE_URL} from "../baseUrl";
+import {API_BASE_URL, OPEN_API_KEY} from "../baseUrl";
+
+const API_PATH = "COOKRCP01/json";
 export const openApi = {
   getOpenAPIRecipeSlideList: async ({start, end}) => {
     const response = await fetch(
-      `${BASE_URL}/api/open/getApiRecipe/${start}/${end}`,
+      `${API_BASE_URL}/${OPEN_API_KEY}/${API_PATH}/${start}/${end}`,
       {
         method: "GET",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -13,19 +14,15 @@ export const openApi = {
     );
     const data = await response.json();
     if (!response.ok) {
-      throw new Error("외부API를 불러오는데 실패하였습니다.");
-    }
-    if (data.length <= 0) {
       throw new Error("외부API를 불러오는데 실패하였습니다.");
     }
     return data;
   },
   getOpenAPIRecipeListDesc: async ({start, end}) => {
     const response = await fetch(
-      `${BASE_URL}/api/open/getApiRecipeSortDesc/${start}/${end}`,
+      `${API_BASE_URL}/${OPEN_API_KEY}/${API_PATH}/${start}/${end}`,
       {
         method: "GET",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -33,9 +30,6 @@ export const openApi = {
     );
     const data = await response.json();
     if (!response.ok) {
-      throw new Error("외부API를 불러오는데 실패하였습니다.");
-    }
-    if (data.length <= 0) {
       throw new Error("외부API를 불러오는데 실패하였습니다.");
     }
     return data;

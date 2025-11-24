@@ -70,7 +70,7 @@ export default function HomeRecipeSlide() {
         >
           {isPending && <HomeSliderLoading />}
           {isSuccess &&
-            data.map((r, index) => (
+            data.row.map((r, index) => (
               <HomeSlider
                 key={r.RCP_SEQ}
                 data={r}
