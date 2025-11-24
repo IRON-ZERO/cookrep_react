@@ -1,15 +1,28 @@
-import { BASE_URL } from "../baseUrl";
-
-
+import {BASE_URL} from "../baseUrl";
 export const recipeApi = {
+  getRecipeListBySearch: async (title = "") => {
+    const url = title.trim()
+      ? `${BASE_URL}/recipe/search/bytitle/${encodeURIComponent(title)}`
+      : `${BASE_URL}/recipe/search/bytitle`;
+    const res = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {"Content-Type": "application/json"},
+    });
+    if (!res.ok) {
+      throw new Error("레시피 리스트를 가져오는데 오류가 발생했습니다.");
+    }
+    const data = await res.json();
+    return data;
+  },
 
-   // presigned URL 발급
+  // presigned URL 발급
   getPresignedUrls: async (fileNames) => {
     try {
       const res = await fetch(`${BASE_URL}/recipe/presigned`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(fileNames),
       });
       if (!res.ok) throw new Error("Presigned URL 요청 실패");
@@ -25,7 +38,7 @@ export const recipeApi = {
     const resp = await fetch(`${BASE_URL}/recipe/${userId}`, {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify(recipeData),
     });
 
@@ -33,9 +46,8 @@ export const recipeApi = {
       throw new Error("레시피 등록 실패!");
     }
 
-    return resp.json(); 
+    return resp.json();
   },
-
 
   // ######### 조회 수 #########
   increaseView: async (recipeId) => {
@@ -47,24 +59,25 @@ export const recipeApi = {
 
       if (!res.ok) throw new Error("조회수 증가 실패");
       const data = await res.json(); // 한 번만 읽기
-      return data.views;    } catch (err) {
+      return data.views;
+    } catch (err) {
       console.error(err);
       return 0;
     }
   },
 
-    // 레시피 삭제
-    deleteRecipe: async (recipeId) => {
-  const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
-  if (!res.ok) {
-    const text = await res.text(); // 서버가 남긴 오류 메시지 확인
-    throw new Error(`레시피 삭제 실패: ${text}`);
-  }
-  return; // 성공 시 그냥 true 반환
-},
+  // 레시피 삭제
+  deleteRecipe: async (recipeId) => {
+    const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const text = await res.text(); // 서버가 남긴 오류 메시지 확인
+      throw new Error(`레시피 삭제 실패: ${text}`);
+    }
+    return; // 성공 시 그냥 true 반환
+  },
 
   // 좋아요 토글
   toggleLike: async (recipeId) => {
@@ -113,13 +126,13 @@ export const recipeApi = {
     }
   },
 
-  createComment: async ({ recipeId, contents, userId }) => {
+  createComment: async ({recipeId, contents, userId}) => {
     try {
       const res = await fetch(`${BASE_URL}/comment`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipeId, contents, userId }),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({recipeId, contents, userId}),
       });
       if (!res.ok) throw new Error("댓글 작성 실패");
       return await res.json();
@@ -129,13 +142,13 @@ export const recipeApi = {
     }
   },
 
-  updateComment: async ({ commentId, contents, userId }) => {
+  updateComment: async ({commentId, contents, userId}) => {
     try {
       const res = await fetch(`${BASE_URL}/comment/${commentId}`, {
         method: "PUT",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents, userId }),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({contents, userId}),
       });
       if (!res.ok) throw new Error("댓글 수정 실패");
       return await res.json();
@@ -158,12 +171,13 @@ export const recipeApi = {
     }
   },
 
-  
   //########## 레시피 edit ##########
   // 레시피 불러오기
   getRecipeDetail: async (recipeId) => {
     try {
-      const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, { credentials: "include" });
+      const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("레시피 불러오기 실패");
       return await res.json();
     } catch (err) {
@@ -178,7 +192,7 @@ export const recipeApi = {
       const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
         method: "PUT",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(updateData),
       });
       if (!res.ok) throw new Error("레시피 수정 실패");

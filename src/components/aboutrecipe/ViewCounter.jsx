@@ -1,6 +1,4 @@
-import React from "react";
-
-export default function ViewsCounter({ recipe }) {
+export default function ViewsCounter({recipe}) {
   // const [views, setViews] = useState(0);
 
   // useEffect(() => {

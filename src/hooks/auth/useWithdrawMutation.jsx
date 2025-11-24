@@ -1,17 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
-import { withDraw } from "../../apis/user/userApi";
+import {useMutation} from "@tanstack/react-query";
+import {useNavigate} from "react-router";
+import {withDraw} from "../../apis/user/userApi";
 
-/**
- * useWithdrawMutation
- * @param {{onErrorCallback?: function}} options - optional callbacks
- * - onErrorCallback(error): called when withdraw fails (avoid alert inside hook)
- */
 export default function useWithdrawMutation(options = {}) {
   const navigate = useNavigate();
-  const { onErrorCallback } = options;
+  const {onErrorCallback} = options;
 
-  const { mutate } = useMutation({
+  const {mutate} = useMutation({
     mutationKey: ["withdrawUser"],
     mutationFn: withDraw,
     onSuccess: () => {
@@ -28,5 +23,5 @@ export default function useWithdrawMutation(options = {}) {
     },
   });
 
-  return { mutate };
+  return {mutate};
 }

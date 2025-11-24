@@ -18,15 +18,6 @@ export default function LoginForm({authMode}) {
       password: "",
     },
   });
-
-  /**
-   * @typedef {object} DataType
-   * @property {String} userId
-   * @property {String} password
-   */
-  /**
-   * @param {DataType} data
-   */
   const onSubmit = (data) => mutate(data);
 
   useEffect(() => {

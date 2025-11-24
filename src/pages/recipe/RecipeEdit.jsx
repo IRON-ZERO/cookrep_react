@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useUser from "../../hooks/auth/useUser";
-import { recipeApi } from "../../apis/recipe/api";
 
 export default function RecipeEdit() {
   const { recipeId } = useParams();
@@ -22,27 +21,34 @@ export default function RecipeEdit() {
 
   // 레시피 불러오기
   useEffect(() => {
-  const fetchRecipe = async () => {
-    setLoading(true);
-    const data = await recipeApi.getRecipeDetail(recipeId);
-    if (data) {
-      setRecipe(data);
-      setKcal(data.kcal || 0);
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
+        return res.json();
+      })
+      .then((data) => {
+        setRecipe(data);
+        setKcal(data.kcal || 0);
 
-      const initSteps = (data.steps || []).map((s, idx) => ({
-        ...s,
-        stepOrder: idx + 1,
-        stepNum: String(idx + 1).padStart(2, "0"),
-        imageFile: null,
-        imageUrl: s.imageUrl || null,
-      }));
-      setSteps(initSteps);
-      setIngredients(data.ingredients || []);
-    }
-    setLoading(false);
-  };
-  fetchRecipe();
-}, [recipeId]);
+        const initSteps = (data.steps || []).map((s, idx) => ({
+          ...s,
+          stepOrder: idx + 1,
+          stepNum: String(idx + 1).padStart(2, "0"),
+          imageFile: null,
+          imageUrl: s.imageUrl || null,
+        }));
+
+        setSteps(initSteps);
+        setIngredients(data.ingredients || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [recipeId]);
 
   // 🔹 대표 이미지 미리보기 cleanup
   useEffect(() => {
@@ -142,7 +148,17 @@ export default function RecipeEdit() {
 
       let presignData = [];
       if (fileNames.length > 0) {
-      presignData = await recipeApi.getPresignedUrls(fileNames);
+        const presignResp = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(fileNames),
+          }
+        );
+        if (!presignResp.ok) throw new Error("Presigned URL 요청 실패");
+        presignData = await presignResp.json();
 
         if (thumbnailFile) {
           const mainUrlObj = presignData.find((u) => u.fileName.includes("main"));
@@ -196,7 +212,12 @@ export default function RecipeEdit() {
         })),
       };
 
-      await recipeApi.updateRecipe(recipeId, updateData);
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipe/${recipeId}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
+      });
 
       alert("레시피 수정 완료!");
       navigate(`/mypage/recipe/${recipeId}`);

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useUser from "../../hooks/auth/useUser";
-import { recipeApi } from "../../apis/recipe/api";
-
 
 const RecipeUpload = () => {
   const navigate = useNavigate();
@@ -97,8 +95,19 @@ const RecipeUpload = () => {
         }
       });
 
-      // 1️⃣ presigned URL 요청
-      const presignData = await recipeApi.getPresignedUrls(fileNames);
+      const presignResp = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/recipe/presigned`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(fileNames),
+        }
+      );
+
+      if (!presignResp.ok) return alert("S3 presigned URL 생성 실패!");
+
+      const presignData = await presignResp.json();
 
       for (let i = 0; i < presignData.length; i++) {
         const fileObj = presignData[i];
@@ -140,8 +149,19 @@ const RecipeUpload = () => {
         steps: stepsData,
       };
 
-      // 4️⃣ 레시피 등록 API 호출
-      const result = await recipeApi.postRecipe(userId, recipeData);
+      const registerResp = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/recipe/${userId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipeData),
+        }
+      );
+
+      if (!registerResp.ok) return alert("레시피 등록 실패!");
+
+      const result = await registerResp.json();
       alert("레시피 등록 완료!");
 
       if (result.recipeId) navigate(`/mypage/recipe/${result.recipeId}`);
