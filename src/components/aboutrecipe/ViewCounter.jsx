@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 export default function ViewsCounter({ recipe }) {
   // const [views, setViews] = useState(0);
@@ -11,7 +11,7 @@ export default function ViewsCounter({ recipe }) {
 
   return (
     <div className="text-center mt-2 text-gray-600">
-      🔥 조회수 {recipe.views}
+      🔥 조회수 {recipe?.views ?? 0}
     </div>
   );
 }

@@ -45,8 +45,6 @@ export const recipeApi = {
         credentials: "include",
       });
 
-      console.log(await res.json());
-
       if (!res.ok) throw new Error("조회수 증가 실패");
       const data = await res.json(); // 한 번만 읽기
       return data.views;    } catch (err) {

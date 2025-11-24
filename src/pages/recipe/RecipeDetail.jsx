@@ -25,7 +25,7 @@ useEffect(() => {
     let updatedViews = data.views;
     if (!sessionStorage.getItem(sessionKey)) {
       const newViews = await recipeApi.increaseView(recipeId);
-      if (typeof newViews === "number") updatedViews = newViews;
+      if (typeof newViews === "number" && newViews > 0) updatedViews = newViews;
       sessionStorage.setItem(sessionKey, "1");
     }
 
