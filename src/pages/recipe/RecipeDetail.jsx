@@ -1,10 +1,11 @@
-import {useEffect, useState} from "react";
-import {useParams, useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Comment from "../../components/aboutrecipe/Comment";
 import ViewsCounter from "../../components/aboutrecipe/ViewCounter";
-import {recipeApi} from "../../apis/recipe/api";
+import { recipeApi } from "../../apis/recipe/api";
+
 export default function RecipeDetail() {
-  const {recipeId} = useParams();
+  const { recipeId } = useParams();
   const navigate = useNavigate();
 
   const [recipe, setRecipe] = useState(null);
@@ -13,65 +14,64 @@ export default function RecipeDetail() {
 
   // 레시피 불러오기
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      setLoading(true);
-      try {
-        const data = await recipeApi.getRecipeDetail(recipeId);
+useEffect(() => {
+  const fetchRecipe = async () => {
+  setLoading(true);
+  try {
+    const data = await recipeApi.getRecipeDetail(recipeId);
 
-        // 세션 체크 후 조회수 증가
-        const sessionKey = `viewed_recipe_${recipeId}`;
-        let updatedViews = data.views;
-        if (!sessionStorage.getItem(sessionKey)) {
-          const newViews = await recipeApi.increaseView(recipeId);
-          if (typeof newViews === "number" && newViews > 0)
-            updatedViews = newViews;
-          sessionStorage.setItem(sessionKey, "1");
-        }
+    // 세션 체크 후 조회수 증가
+    const sessionKey = `viewed_recipe_${recipeId}`;
+    let updatedViews = data.views;
+    if (!sessionStorage.getItem(sessionKey)) {
+      const newViews = await recipeApi.increaseView(recipeId);
+      if (typeof newViews === "number" && newViews > 0) updatedViews = newViews;
+      sessionStorage.setItem(sessionKey, "1");
+    }
 
-        setRecipe({...data, views: updatedViews});
-        setIsOwner(data.owner);
-      } catch (err) {
-        console.error(err);
-        navigate("/");
-      } finally {
-        setLoading(false);
-      }
-    };
+    setRecipe({ ...data, views: updatedViews });
+    setIsOwner(data.owner);
+  } catch (err) {
+    console.error(err);
+    navigate("/");
+  } finally {
+    setLoading(false);
+  }
+};
 
-    fetchRecipe();
-  }, [recipeId, navigate]);
+
+  fetchRecipe();
+}, [recipeId, navigate]);
 
   // 삭제
-  const deleteRecipe = () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
-    recipeApi
-      .deleteRecipe(recipeId)
-      .then(() => {
-        alert("삭제 완료!");
-        navigate("/mypage/recipes");
-      })
-      .catch((err) => {
-        console.error(err);
-        alert(err.message || "삭제 중 오류 발생");
-      });
-  };
-
-  // 좋아요 토글
-  const handleLike = async () => {
-    try {
-      const data = await recipeApi.toggleLike(recipeId);
-      setRecipe((prev) => ({
-        ...prev,
-        like: data.likeCount,
-        liked: data.liked,
-      }));
-    } catch (err) {
+    const deleteRecipe = () => {
+  if (!window.confirm("정말 삭제하시겠습니까?")) return;
+      
+  recipeApi.deleteRecipe(recipeId)
+    .then(() => {
+      alert("삭제 완료!");
+      navigate("/mypage/recipes");
+    })
+    .catch((err) => {
       console.error(err);
-      setLoading(false);
-    }
-  };
+      alert(err.message || "삭제 중 오류 발생");
+    });
+};
+
+ // 좋아요 토글
+    const handleLike = async () => {
+      try {
+        const data = await recipeApi.toggleLike(recipeId);
+        setRecipe((prev) => ({
+          ...prev,
+          like: data.likeCount,
+          liked: data.liked,
+        }));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  
 
   if (loading) return <p>로딩 중...</p>;
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
@@ -102,14 +102,14 @@ export default function RecipeDetail() {
             조리시간: <span className="font-semibold">{recipe.cookTime}</span>분
           </p>
           <p>
-            인원 수: <span className="font-semibold">{recipe.peopleCount}</span>
-            명
+            인원 수: <span className="font-semibold">{recipe.peopleCount}</span>명
           </p>
           <p>
             칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
           </p>
-        </div>
-        <ViewsCounter recipe={recipe} />
+          </div>
+          <ViewsCounter recipe={recipe} />
+
       </div>
 
       {/* 재료 */}
@@ -143,9 +143,7 @@ export default function RecipeDetail() {
                   <p className="font-semibold text-orange-600 mb-2">
                     Step {step.stepOrder}
                   </p>
-                  <p className="text-gray-700 leading-relaxed">
-                    {step.contents}
-                  </p>
+                  <p className="text-gray-700 leading-relaxed">{step.contents}</p>
                 </div>
                 {step.imageUrl && (
                   <img
@@ -171,27 +169,27 @@ export default function RecipeDetail() {
           목록으로
         </button>
 
-        {isOwner && (
-          <>
-            {/* 수정 버튼 */}
-            <button
-              type="button"
-              onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
-              className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition shadow-sm"
-            >
-              수정
-            </button>
+         {isOwner && (
+    <>
+      {/* 수정 버튼 */}
+      <button
+        type="button"
+        onClick={() => navigate(`/mypage/recipe/edit/${recipeId}`)}
+        className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition shadow-sm"
+      >
+        수정
+      </button>
 
-            {/* 삭제 버튼 */}
-            <button
-              type="button"
-              onClick={deleteRecipe}
-              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition shadow-sm"
-            >
-              삭제
-            </button>
-          </>
-        )}
+      {/* 삭제 버튼 */}
+      <button
+        type="button"
+        onClick={deleteRecipe}
+        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition shadow-sm"
+      >
+        삭제
+      </button>
+    </>
+  )}
       </div>
 
       {/* 좋아요 버튼 */}
@@ -205,13 +203,13 @@ export default function RecipeDetail() {
           ) : (
             <span className="text-gray-400 text-2xl">🤍</span> // 좋아요 X
           )}
-          <span className="text-lg font-semibold text-red-500">
-            {recipe.like}
-          </span>
+          <span className="text-lg font-semibold text-red-500">{recipe.like}</span>
         </button>
+
       </div>
 
       <Comment recipeId={recipeId} />
     </div>
+    
   );
 }
