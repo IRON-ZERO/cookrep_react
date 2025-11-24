@@ -13,18 +13,31 @@ export default function RecipeDetail() {
   const [isOwner, setIsOwner] = useState(false);
 
   // 레시피 불러오기
-    useEffect(() => {
-      recipeApi.getRecipe(recipeId)
-        .then((data) => {
-          setRecipe({ ...data, liked: data.liked, like: data.like });
-          setIsOwner(data.owner);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
-    }, [recipeId]);
+useEffect(() => {
+  const fetchRecipe = async () => {
+    setLoading(true);
+    try {
+      // 1️⃣ 레시피 상세 조회 먼저
+      const data = await recipeApi.getRecipeDetail(recipeId);
+
+      // 2️⃣ 조회수 증가 (POST) → 반환값 반영
+      const updatedViews = await recipeApi.increaseView(recipeId);
+
+      // 3️⃣ 레시피 데이터 + 최신 조회수 반영
+      setRecipe({ ...data, views: updatedViews });
+      setIsOwner(data.owner);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRecipe();
+}, [recipeId]);
+
+
+
 
 
   // 삭제
@@ -94,7 +107,7 @@ export default function RecipeDetail() {
             칼로리: <span className="font-semibold">{recipe.kcal}</span> kcal
           </p>
           </div>
-          <ViewsCounter recipeId={recipeId} />
+          <ViewsCounter recipe={recipe} />
 
       </div>
 

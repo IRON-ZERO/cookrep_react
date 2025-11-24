@@ -3,22 +3,22 @@ import { BASE_URL } from "../baseUrl";
 
 export const recipeApi = {
 
-
-    // S3 presigned URL 요청
-  // getPresignedUrls: async (fileNames) => {
-  //   const resp = await fetch(`${BASE_URL}/recipe/presigned`, {
-  //     method: "POST",
-  //     credentials: "include",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(fileNames),
-  //   });
-
-  //   if (!resp.ok) {
-  //     throw new Error("S3 presigned URL 생성 실패!");
-  //   }
-
-  //   return resp.json(); // [{ uploadUrl, key }, ...]
-  // },
+   // presigned URL 발급
+  getPresignedUrls: async (fileNames) => {
+    try {
+      const res = await fetch(`${BASE_URL}/recipe/presigned`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fileNames),
+      });
+      if (!res.ok) throw new Error("Presigned URL 요청 실패");
+      return await res.json();
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
 
   // 레시피 등록
   postRecipe: async (userId, recipeData) => {
@@ -36,15 +36,34 @@ export const recipeApi = {
     return resp.json(); 
   },
 
-  // 단일 레시피 조회
-    getRecipe: async (recipeId) => {
-      const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
-        method: "GET",
+  // ######### 조회 수 #########
+  increaseView: async (recipeId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/recipe/${recipeId}/view`, {
+        method: "POST",
         credentials: "include",
       });
-      if (!res.ok) throw new Error("레시피 조회 실패");
-      return res.json();
-    },
+      if (!res.ok) throw new Error("조회수 증가 실패");
+      return (await res.json()).views; // { views: 123 } 반환
+    } catch (err) {
+      console.error(err);
+      return 0;
+    }
+  },
+
+  // 레시피 상세 조회 (조회수 증가 없이)
+  getRecipeDetail: async (recipeId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("레시피 상세 조회 실패");
+      return await res.json();
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  },
 
     // 레시피 삭제
     deleteRecipe: async (recipeId) => {
@@ -151,21 +170,6 @@ export const recipeApi = {
     }
   },
 
-  // ######### 조회 수 #########
-  getViews: async (recipeId, increment = false) => {
-    try {
-      const res = await fetch(
-        `${BASE_URL}/recipe/countview/${recipeId}?increment=${increment}`,
-        { credentials: "include" }
-      );
-      if (!res.ok) throw new Error("조회수 불러오기 실패");
-      return (await res.json()).views;
-    } catch (err) {
-      console.error(err);
-      return 0;
-    }
-  },
-
   
   //########## 레시피 edit ##########
   // 레시피 불러오기
@@ -190,23 +194,6 @@ export const recipeApi = {
         body: JSON.stringify(updateData),
       });
       if (!res.ok) throw new Error("레시피 수정 실패");
-      return await res.json();
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  },
-
-  // presigned URL 발급
-  getPresignedUrls: async (fileNames) => {
-    try {
-      const res = await fetch(`${BASE_URL}/recipe/presigned`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fileNames),
-      });
-      if (!res.ok) throw new Error("Presigned URL 요청 실패");
       return await res.json();
     } catch (err) {
       console.error(err);

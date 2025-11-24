@@ -35,8 +35,10 @@ export default function Comment({ recipeId }) {
   const deleteComment = async (commentId) => {
     if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
     const ok = await recipeApi.deleteComment(commentId);
-    if (ok) setComments((prev) => prev.filter((c) => c.commentId !== commentId));
-    else alert("댓글 삭제 실패");
+    if (ok) {
+      setComments((prev) => prev.filter((c) => c.commentId !== commentId));
+      alert("댓글이 삭제되었습니다.");
+    } else alert("댓글 삭제 실패");
   };
 
   // 댓글 수정
