@@ -8,6 +8,7 @@ export default function useLogoutMutation() {
     mutationKey: ["logoutUser"],
     mutationFn: authApi.logout,
     onSuccess: () => {
+      sessionStorage.removeItem("loggedInUser");
       navigate("/login");
     },
     onError: (error) => {

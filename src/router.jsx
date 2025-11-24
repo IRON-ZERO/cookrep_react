@@ -1,4 +1,4 @@
-import { createBrowserRouter, redirect } from "react-router";
+import {createBrowserRouter, redirect} from "react-router";
 import App from "./App";
 import RecipeUpload from "./pages/recipe/RecipeUpload";
 import RecipeList from "./pages/recipe/RecipeList.jsx";
@@ -6,7 +6,7 @@ import RecipeDetail from "./pages/recipe/RecipeDetail.jsx";
 import RecipeEdit from "./pages/recipe/RecipeEdit.jsx";
 import Login from "./pages/login/Login.jsx";
 import Join from "./pages/join/Join.jsx";
-import { authApi } from "./apis/auth/authApi.js";
+import {authApi} from "./apis/auth/authApi.js";
 import Mypage from "./pages/mypage/Mypage";
 import Profile from "./pages/mypage/Profile";
 import Fridge from "./pages/mypage/Fridge";
@@ -16,9 +16,9 @@ import Main from "./pages/Main";
 
 const checkAuth = async () => {
   try {
-    await authApi.loggedIn();
-    return true;
-  } catch (err) {
+    const user = await authApi.loggedIn();
+    return !!user;
+  } catch {
     return false;
   }
 };
@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
-      { path: "/", element: <Main /> },
+      {path: "/", element: <Main />},
       {
         path: "/upload",
         element: <RecipeUpload />,

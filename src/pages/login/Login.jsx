@@ -10,7 +10,12 @@ export default function Login() {
   const [authMode, setAuthMode] = useState(true);
   return (
     <AuthLayout img={"login_wallpaper"}>
-      <img src={logo} alt="로고이미지" width={200} height={200} />
+      <img
+        src={logo}
+        alt="로고이미지"
+        loading="lazy"
+        className="w-44 sm:w-52 transition-[width] duration-300 ease-in-out"
+      />
       <AuthMode mode={authMode} setMode={setAuthMode} />
       <LoginForm authMode={authMode} />
       <AuthDivider />
