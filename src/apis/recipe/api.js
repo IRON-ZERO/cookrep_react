@@ -53,17 +53,13 @@ export const recipeApi = {
 
   // 레시피 상세 조회 (조회수 증가 없이)
   getRecipeDetail: async (recipeId) => {
-    try {
-      const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
+     const res = await fetch(`${BASE_URL}/recipe/${recipeId}`, {
+        method: "GET",
         credentials: "include",
       });
-      if (!res.ok) throw new Error("레시피 상세 조회 실패");
-      return await res.json();
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  },
+      if (!res.ok) throw new Error("레시피 조회 실패");
+      return res.json();
+    },
 
     // 레시피 삭제
     deleteRecipe: async (recipeId) => {
@@ -200,5 +196,4 @@ export const recipeApi = {
       throw err;
     }
   },
- 
 };

@@ -28,6 +28,8 @@ useEffect(() => {
       setIsOwner(data.owner);
     } catch (err) {
       console.error(err);
+      alert("레시피를 불러오는 중 오류가 발생했습니다.");
+      navigate("/"); // 또는 이전 페이지로 이동
     } finally {
       setLoading(false);
     }
@@ -35,10 +37,6 @@ useEffect(() => {
 
   fetchRecipe();
 }, [recipeId]);
-
-
-
-
 
   // 삭제
     const deleteRecipe = () => {
