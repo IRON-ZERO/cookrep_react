@@ -36,6 +36,7 @@ export const recipeApi = {
     return resp.json(); 
   },
 
+
   // ######### 조회 수 #########
   increaseView: async (recipeId) => {
     try {

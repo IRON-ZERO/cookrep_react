@@ -39,6 +39,7 @@ export default function Comment({ recipeId }) {
       setComments((prev) => prev.filter((c) => c.commentId !== commentId));
       alert("댓글이 삭제되었습니다.");
     } else alert("댓글 삭제 실패");
+
   };
 
   // 댓글 수정

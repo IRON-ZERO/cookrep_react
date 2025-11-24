@@ -13,6 +13,7 @@ export default function RecipeDetail() {
   const [isOwner, setIsOwner] = useState(false);
 
   // 레시피 불러오기
+
 useEffect(() => {
   const fetchRecipe = async () => {
     setLoading(true);
@@ -41,7 +42,7 @@ useEffect(() => {
   // 삭제
     const deleteRecipe = () => {
   if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
+      
   recipeApi.deleteRecipe(recipeId)
     .then(() => {
       alert("삭제 완료!");
@@ -53,8 +54,7 @@ useEffect(() => {
     });
 };
 
-
-  // 좋아요 토글
+ // 좋아요 토글
     const handleLike = async () => {
       try {
         const data = await recipeApi.toggleLike(recipeId);
@@ -67,8 +67,7 @@ useEffect(() => {
         console.error(err);
       }
     };
-
-
+  
 
   if (loading) return <p>로딩 중...</p>;
   if (!recipe) return <p>레시피를 찾을 수 없습니다.</p>;
