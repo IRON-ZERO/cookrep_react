@@ -18,26 +18,28 @@ useEffect(() => {
   const fetchRecipe = async () => {
     setLoading(true);
     try {
-      // 1️⃣ 레시피 상세 조회 먼저
       const data = await recipeApi.getRecipeDetail(recipeId);
-
-      // 2️⃣ 조회수 증가 (POST) → 반환값 반영
-      const updatedViews = await recipeApi.increaseView(recipeId);
-
-      // 3️⃣ 레시피 데이터 + 최신 조회수 반영
-      setRecipe({ ...data, views: updatedViews });
+      setRecipe({ ...data, views: data.views });
       setIsOwner(data.owner);
+
+      const sessionKey = `viewed_recipe_${recipeId}`;
+      if (!sessionStorage.getItem(sessionKey)) {
+        const updatedViews = await recipeApi.increaseView(recipeId); // number 반환
+        if (updatedViews && typeof updatedViews === "number") {
+          setRecipe(prev => ({ ...prev, views: updatedViews }));
+        }
+        sessionStorage.setItem(sessionKey, "1");
+      }
     } catch (err) {
       console.error(err);
-      alert("레시피를 불러오는 중 오류가 발생했습니다.");
-      navigate("/"); // 또는 이전 페이지로 이동
+      navigate("/");
     } finally {
       setLoading(false);
     }
   };
 
   fetchRecipe();
-}, [recipeId]);
+}, [recipeId, navigate]);
 
   // 삭제
     const deleteRecipe = () => {
