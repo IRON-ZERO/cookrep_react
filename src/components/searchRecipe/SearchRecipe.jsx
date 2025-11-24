@@ -8,7 +8,7 @@ export default function SearchRecipe() {
   const {data, isError, isPending, isSuccess, refetch} = useSearchRecipe({
     title,
   });
-
+  console.log(data);
   useEffect(() => {
     refetch();
   }, [refetch, title]);
@@ -33,7 +33,7 @@ export default function SearchRecipe() {
       </form>
       {isPending && <p className="text-xl">불러오는 중 입니다.</p>}
       {isSuccess && (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 ">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 ">
           <SearchRecipeCard recipe={data} />
         </ul>
       )}

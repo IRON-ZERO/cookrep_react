@@ -5,7 +5,7 @@ export default function SearchRecipeCard({recipe}) {
   return recipe.map((val) => (
     <li
       key={val.recipeId}
-      className="relative p-3 rounded-lg flex overflow-hidden size-96 z-30 group **:transition-[filter, transform] **:duration-200 **:ease-in-out"
+      className="relative p-3 rounded-lg flex overflow-hidden size-[400px] z-30 group **:transition-[filter, transform] **:duration-200 **:ease-in-out"
     >
       <Link
         to={`/mypage/recipe/${val.recipeId}`}
