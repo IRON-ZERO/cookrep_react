@@ -1,16 +1,31 @@
 import {useQuery} from "@tanstack/react-query";
 import {authApi} from "../../apis/auth/authApi";
+import {useEffect} from "react";
 /**
  *
  * @returns {{
- *    data:{userId:string,userName:string,userEmail:string}
+ *  data:{userId:string,userNickname:string,userEmail:string},
+ *  isPending:boolean,
+ *  isSuccess:boolean
  * }}
  */
 export default function useUser() {
-  const {data, isPending} = useQuery({
+  const {data, isPending, isSuccess} = useQuery({
     queryKey: ["loggedInUser"],
     queryFn: authApi.loggedIn,
-    placeholderData: {userId: null, userName: "로딩중", userEmail: "로딩중"},
+    initialData: () => {
+      try {
+        return JSON.parse(sessionStorage.getItem("loggedInUser") || "null");
+      } catch {
+        return null;
+      }
+    },
   });
-  return {data, isPending};
+  useEffect(() => {
+    if (isSuccess && data) {
+      sessionStorage.setItem("loggedInUser", JSON.stringify(data));
+    }
+  }, [isSuccess, data]);
+
+  return {data, isPending, isSuccess};
 }

@@ -3,7 +3,7 @@ export default function AuthMode({mode, setMode}) {
   const emailMode = () => setMode(false);
   return (
     <div
-      className={`relative flex border rounded-md authMode ${
+      className={`relative flex flex-col sm:flex-row border rounded-md authMode w-full ${
         mode ? "authMode_username" : "authMode_email"
       } `}
     >
@@ -15,7 +15,7 @@ export default function AuthMode({mode, setMode}) {
 function ModeBtn({mode, setMode, txt}) {
   return (
     <button
-      className={`relative z-50 cursor-pointer px-5 py-3  ${
+      className={`relative z-50 cursor-pointer px-5 py-3 w-full ${
         mode ? "text-(--ck-txt)" : "text-(--ck-subTxt)"
       }`}
       onClick={setMode}

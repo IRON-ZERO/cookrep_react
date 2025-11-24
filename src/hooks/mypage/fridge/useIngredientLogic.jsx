@@ -40,19 +40,23 @@ export function useIngredientLogic(activeIds, setActiveIds, setActiveNames) {
     );
   };
 
-  // 재료 추가 핸들러
-  const handleAdd = () => {
-    const value = prompt("재료를 입력하세요. (예: 당근,마늘)");
-    if (!value?.trim()) return;
-    const ingredientNames = value
-      .split(",")
-      .map((v) => v.trim())
-      .filter((v) => v.length > 0); // 빈 문자열 제거
+  // 재료 추가 핸들러 (외부에서 값 전달)
+  // value: 문자열(예: '당근,마늘') 또는 문자열 배열
+  const handleAdd = (value) => {
+    if (!value) return { success: false, message: "입력값이 없습니다." };
+    const ingredientNames = Array.isArray(value)
+      ? value.map((v) => String(v).trim()).filter((v) => v.length > 0)
+      : String(value)
+          .split(",")
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+
     if (ingredientNames.length === 0) {
-      alert("유효한 재료 이름을 입력해주세요.");
-      return;
+      return { success: false, message: "유효한 재료 이름을 입력해주세요." };
     }
+
     addMutation.mutate(ingredientNames);
+    return { success: true };
   };
 
   // 재료 삭제 핸들러
