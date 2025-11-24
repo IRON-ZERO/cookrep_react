@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { recipeApi } from "../../apis/recipe/api";
 
+
 export default function MyRecipeList() {
   // 임시 테스트용 userId
   const userId = "0c79275d-716f-4551-83ab-95265b648308";
@@ -54,13 +55,13 @@ export default function MyRecipeList() {
                   <img
                     src={recipe.thumbnailImageUrl}
                     alt={recipe.title}
-                    style={{ width: "100%", height: "160px", objectFit: "cover" }}
+                    style={{width: "100%", height: "160px", objectFit: "cover"}}
                   />
-                  <div style={{ padding: "1rem" }}>
-                    <h4 style={{ marginBottom: "0.5rem" }}>{recipe.title}</h4>
+                  <div style={{padding: "1rem"}}>
+                    <h4 style={{marginBottom: "0.5rem"}}>{recipe.title}</h4>
                     <div
                       className="meta"
-                      style={{ fontSize: "0.9rem", color: "#666" }}
+                      style={{fontSize: "0.9rem", color: "#666"}}
                     >
                       <span className="views">조회수 {recipe.views}</span> ·{" "}
                       <span className="likes">좋아요 {recipe.likeCount}</span>

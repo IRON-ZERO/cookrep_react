@@ -163,7 +163,7 @@ useEffect(() => {
       {/* 버튼 */}
       <div className="flex justify-center gap-4 mt-10">
         <button
-          onClick={() => navigate("/mypage/recipes")}
+          onClick={() => navigate(-1)}
           className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
         >
           목록으로

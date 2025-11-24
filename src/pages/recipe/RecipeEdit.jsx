@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import useUser from "../../hooks/auth/useUser";
 import { recipeApi } from "../../apis/recipe/api";
 
 export default function RecipeEdit() {
-  const { recipeId } = useParams();
+  const {recipeId} = useParams();
   const navigate = useNavigate();
-  const { data: userData } = useUser();
+  const {data: userData} = useUser();
   const userId = userData.userId;
 
   const [recipe, setRecipe] = useState(null);
@@ -17,8 +17,7 @@ export default function RecipeEdit() {
   const [kcal, setKcal] = useState(0);
 
   // ingredients 상태 변경 감지용 useEffect
-  useEffect(() => {
-  }, [ingredients]);
+  useEffect(() => {}, [ingredients]);
 
   // 레시피 불러오기
   useEffect(() => {
@@ -68,7 +67,7 @@ export default function RecipeEdit() {
 
   /** 재료 관련 로직 **/
   const addIngredient = () => {
-    setIngredients([...ingredients, { name: "", count: "" }]);
+    setIngredients([...ingredients, {name: "", count: ""}]);
   };
 
   const updateIngredient = (index, field, value) => {
@@ -133,9 +132,9 @@ export default function RecipeEdit() {
 
       steps.forEach((step) => {
         if (step.imageFile) {
-          const path = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(
-            step.imageFile.name
-          )}`;
+          const path = `users/${userId}/recipes/${now}/steps/${
+            step.stepNum
+          }_${encodeURIComponent(step.imageFile.name)}`;
           fileNames.push(path);
         }
       });
@@ -145,18 +144,27 @@ export default function RecipeEdit() {
       presignData = await recipeApi.getPresignedUrls(fileNames);
 
         if (thumbnailFile) {
-          const mainUrlObj = presignData.find((u) => u.fileName.includes("main"));
+          const mainUrlObj = presignData.find((u) =>
+            u.fileName.includes("main")
+          );
           if (mainUrlObj)
-            await fetch(mainUrlObj.uploadUrl, { method: "PUT", body: thumbnailFile });
+            await fetch(mainUrlObj.uploadUrl, {
+              method: "PUT",
+              body: thumbnailFile,
+            });
         }
 
         for (let step of steps) {
           if (step.imageFile) {
-            const path = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(
-              step.imageFile.name
-            )}`;
+            const path = `users/${userId}/recipes/${now}/steps/${
+              step.stepNum
+            }_${encodeURIComponent(step.imageFile.name)}`;
             const urlObj = presignData.find((u) => u.fileName === path);
-            if (urlObj) await fetch(urlObj.uploadUrl, { method: "PUT", body: step.imageFile });
+            if (urlObj)
+              await fetch(urlObj.uploadUrl, {
+                method: "PUT",
+                body: step.imageFile,
+              });
           }
         }
       }
@@ -164,11 +172,15 @@ export default function RecipeEdit() {
       const updateData = {
         title: recipe.title,
         thumbnailImageUrl: thumbnailFile
-          ? `users/${userId}/recipes/${now}/main/${encodeURIComponent(thumbnailFile.name)}`
+          ? `users/${userId}/recipes/${now}/main/${encodeURIComponent(
+              thumbnailFile.name
+            )}`
           : (() => {
               if (!recipe.thumbnailImageUrl) return null;
               const match = recipe.thumbnailImageUrl.match(/users\/.*$/);
-              return match ? decodeURIComponent(match[0].split("?")[0]) : recipe.thumbnailImageUrl;
+              return match
+                ? decodeURIComponent(match[0].split("?")[0])
+                : recipe.thumbnailImageUrl;
             })(),
         peopleCount: recipe.peopleCount,
         prepTime: recipe.prepTime,
@@ -177,12 +189,14 @@ export default function RecipeEdit() {
         steps: steps.map((step) => {
           let imageKey = null;
           if (step.imageFile) {
-            imageKey = `users/${userId}/recipes/${now}/steps/${step.stepNum}_${encodeURIComponent(
-              step.imageFile.name
-            )}`;
+            imageKey = `users/${userId}/recipes/${now}/steps/${
+              step.stepNum
+            }_${encodeURIComponent(step.imageFile.name)}`;
           } else if (step.imageUrl) {
             const match = step.imageUrl.match(/users\/.*$/);
-            imageKey = match ? decodeURIComponent(match[0].split("?")[0]) : step.imageUrl;
+            imageKey = match
+              ? decodeURIComponent(match[0].split("?")[0])
+              : step.imageUrl;
           }
           return {
             stepOrder: step.stepOrder,
@@ -208,25 +222,35 @@ export default function RecipeEdit() {
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-2xl mt-52 mb-11">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">레시피 수정</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        레시피 수정
+      </h2>
 
       {/* 제목 */}
       <div className="mb-6">
-        <label className="block text-lg font-semibold mb-2 text-gray-700">레시피 제목</label>
+        <label className="block text-lg font-semibold mb-2 text-gray-700">
+          레시피 제목
+        </label>
         <input
           type="text"
           value={recipe.title}
-          onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
+          onChange={(e) => setRecipe({...recipe, title: e.target.value})}
           className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-orange-400"
         />
       </div>
 
       {/* 대표 이미지 */}
       <div className="mb-6">
-        <label className="block text-lg font-semibold mb-2 text-gray-700">대표 이미지</label>
+        <label className="block text-lg font-semibold mb-2 text-gray-700">
+          대표 이미지
+        </label>
         <div className="flex items-center gap-6">
           <img
-            src={thumbnailFile ? URL.createObjectURL(thumbnailFile) : recipe.thumbnailImageUrl || recipe.thumbnailUrl}
+            src={
+              thumbnailFile
+                ? URL.createObjectURL(thumbnailFile)
+                : recipe.thumbnailImageUrl || recipe.thumbnailUrl
+            }
             alt="thumbnail"
             className="w-40 h-40 object-cover rounded-lg border border-gray-300 shadow-sm"
           />
@@ -250,21 +274,23 @@ export default function RecipeEdit() {
           <input
             type="number"
             value={recipe.peopleCount}
-            onChange={(e) => setRecipe({ ...recipe, peopleCount: e.target.value })}
+            onChange={(e) =>
+              setRecipe({...recipe, peopleCount: e.target.value})
+            }
             placeholder="인원"
             className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-orange-400"
           />
           <input
             type="number"
             value={recipe.prepTime}
-            onChange={(e) => setRecipe({ ...recipe, prepTime: e.target.value })}
+            onChange={(e) => setRecipe({...recipe, prepTime: e.target.value})}
             placeholder="준비시간"
             className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-orange-400"
           />
           <input
             type="number"
             value={recipe.cookTime}
-            onChange={(e) => setRecipe({ ...recipe, cookTime: e.target.value })}
+            onChange={(e) => setRecipe({...recipe, cookTime: e.target.value})}
             placeholder="조리시간"
             className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-orange-400"
           />
@@ -280,7 +306,9 @@ export default function RecipeEdit() {
 
       {/* 재료 */}
       <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-3 text-gray-700">사용된 재료</h3>
+        <h3 className="text-xl font-semibold mb-3 text-gray-700">
+          사용된 재료
+        </h3>
         {ingredients.map((ing, idx) => (
           <div key={idx} className="flex gap-3 mb-2 items-center">
             <input
@@ -299,7 +327,8 @@ export default function RecipeEdit() {
             />
             <button
               onClick={() => deleteIngredient(idx)}
-              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
+              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition"
+            >
               삭제
             </button>
           </div>
@@ -321,58 +350,68 @@ export default function RecipeEdit() {
             key={idx}
             className="border border-gray-200 p-4 rounded-lg mb-4 bg-gray-50 shadow-sm"
           >
-            <h4 className="font-semibold text-gray-700 mb-2">Step {step.stepNum}</h4>
+            <h4 className="font-semibold text-gray-700 mb-2">
+              Step {step.stepNum}
+            </h4>
             <textarea
               value={step.contents}
               onChange={(e) => updateStepContent(idx, e.target.value)}
               placeholder="조리 내용을 입력하세요"
               className="w-full border border-gray-300 rounded-lg p-2 mb-3 focus:ring-2 focus:ring-orange-400"
             />
-             {step.imageUrl ? (
-    <>
-      <img
-        src={step.imageFile ? URL.createObjectURL(step.imageFile) : step.imageUrl}
-        alt={`Step ${step.stepNum}`}
-        className="w-36 h-36 object-cover rounded-lg mb-3 border border-gray-300 shadow-sm"
-      />
-      <div className="flex items-center gap-3">
-        <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
-          이미지 변경
-          <input
-            type="file"
-            onChange={(e) => updateStepImage(idx, e.target.files[0])}
-            className="hidden"
-          />
-        </label>
-        <button
-          onClick={() => deleteStep(idx)}
-          className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
-          단계 삭제
-        </button>
-      </div>
-    </>
-  ) : (
-    <>
-      <label
-        htmlFor={`stepImage-${idx}`}
-        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-orange-50 mb-3"
-      >
-        <p className="text-gray-500">이미지를 선택하거나 드래그하세요</p>
-      </label>
-      <input
-        id={`stepImage-${idx}`}
-        type="file"
-        accept="image/*"
-        onChange={(e) => updateStepImage(idx, e.target.files[0])}
-        className="hidden"
-      />
-      <button
-        onClick={() => deleteStep(idx)}
-        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition">
-        단계 삭제
-      </button>
-    </>
-  )}
+            {step.imageUrl ? (
+              <>
+                <img
+                  src={
+                    step.imageFile
+                      ? URL.createObjectURL(step.imageFile)
+                      : step.imageUrl
+                  }
+                  alt={`Step ${step.stepNum}`}
+                  className="w-36 h-36 object-cover rounded-lg mb-3 border border-gray-300 shadow-sm"
+                />
+                <div className="flex items-center gap-3">
+                  <label className="cursor-pointer bg-orange-400 text-white px-4 py-2 rounded-lg hover:bg-orange-500 transition text-sm font-medium shadow-sm">
+                    이미지 변경
+                    <input
+                      type="file"
+                      onChange={(e) => updateStepImage(idx, e.target.files[0])}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    onClick={() => deleteStep(idx)}
+                    className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition"
+                  >
+                    단계 삭제
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <label
+                  htmlFor={`stepImage-${idx}`}
+                  className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-orange-50 mb-3"
+                >
+                  <p className="text-gray-500">
+                    이미지를 선택하거나 드래그하세요
+                  </p>
+                </label>
+                <input
+                  id={`stepImage-${idx}`}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => updateStepImage(idx, e.target.files[0])}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => deleteStep(idx)}
+                  className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition"
+                >
+                  단계 삭제
+                </button>
+              </>
+            )}
           </div>
         ))}
 
