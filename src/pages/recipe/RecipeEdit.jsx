@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import useUser from "../../hooks/auth/useUser";
-import {recipeApi} from "../../apis/recipe/api";
+import { recipeApi } from "../../apis/recipe/api";
 
 export default function RecipeEdit() {
   const {recipeId} = useParams();
@@ -21,27 +21,27 @@ export default function RecipeEdit() {
 
   // 레시피 불러오기
   useEffect(() => {
-    const fetchRecipe = async () => {
-      setLoading(true);
-      const data = await recipeApi.getRecipeDetail(recipeId);
-      if (data) {
-        setRecipe(data);
-        setKcal(data.kcal || 0);
+  const fetchRecipe = async () => {
+    setLoading(true);
+    const data = await recipeApi.getRecipeDetail(recipeId);
+    if (data) {
+      setRecipe(data);
+      setKcal(data.kcal || 0);
 
-        const initSteps = (data.steps || []).map((s, idx) => ({
-          ...s,
-          stepOrder: idx + 1,
-          stepNum: String(idx + 1).padStart(2, "0"),
-          imageFile: null,
-          imageUrl: s.imageUrl || null,
-        }));
-        setSteps(initSteps);
-        setIngredients(data.ingredients || []);
-      }
-      setLoading(false);
-    };
-    fetchRecipe();
-  }, [recipeId]);
+      const initSteps = (data.steps || []).map((s, idx) => ({
+        ...s,
+        stepOrder: idx + 1,
+        stepNum: String(idx + 1).padStart(2, "0"),
+        imageFile: null,
+        imageUrl: s.imageUrl || null,
+      }));
+      setSteps(initSteps);
+      setIngredients(data.ingredients || []);
+    }
+    setLoading(false);
+  };
+  fetchRecipe();
+}, [recipeId]);
 
   // 🔹 대표 이미지 미리보기 cleanup
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function RecipeEdit() {
 
       let presignData = [];
       if (fileNames.length > 0) {
-        presignData = await recipeApi.getPresignedUrls(fileNames);
+      presignData = await recipeApi.getPresignedUrls(fileNames);
 
         if (thumbnailFile) {
           const mainUrlObj = presignData.find((u) =>

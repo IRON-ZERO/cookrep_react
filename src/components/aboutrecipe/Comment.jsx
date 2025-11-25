@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import useUser from "../../hooks/auth/useUser";
-import {recipeApi} from "../../apis/recipe/api";
+import { recipeApi } from "../../apis/recipe/api";
 
-export default function Comment({recipeId}) {
+export default function Comment({ recipeId }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const {data: userData} = useUser();
+  const { data: userData } = useUser();
   const userId = userData?.userId;
   const nickname = userData?.userName;
 
@@ -43,21 +43,16 @@ export default function Comment({recipeId}) {
       setComments((prev) => prev.filter((c) => c.commentId !== commentId));
       alert("댓글이 삭제되었습니다.");
     } else alert("댓글 삭제 실패");
+
   };
 
   // 댓글 수정
   const updateComment = async (commentId) => {
     if (!editingCommentText.trim()) return alert("댓글 내용을 입력해주세요.");
-    const updated = await recipeApi.updateComment({
-      commentId,
-      contents: editingCommentText,
-      userId,
-    });
+    const updated = await recipeApi.updateComment({ commentId, contents: editingCommentText, userId });
     if (updated) {
       setComments((prev) =>
-        prev.map((c) =>
-          c.commentId === commentId ? {...c, contents: editingCommentText} : c
-        )
+        prev.map((c) => (c.commentId === commentId ? { ...c, contents: editingCommentText } : c))
       );
       setEditingCommentId(null);
       setEditingCommentText("");
