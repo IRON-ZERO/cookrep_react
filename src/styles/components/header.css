@@ -1,0 +1,25 @@
+.wiggle {
+  animation: 60s infinite ease-in-out shakeLogo;
+  transform-origin: center;
+}
+
+@keyframes shakeLogo {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  1% {
+    transform: rotateZ(5deg);
+  }
+  2% {
+    transform: rotateZ(-5deg);
+  }
+  3% {
+    transform: rotateZ(5deg);
+  }
+  4% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(0deg);
+  }
+}

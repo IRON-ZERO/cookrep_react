@@ -1,0 +1,95 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addUserIngredients,
+  deleteUserIngredients,
+  getUserIngredients,
+} from "../../../apis/user/userApi";
+
+export function useIngredientLogic(activeIds, setActiveIds, setActiveNames) {
+  // 재료 리스트 조회
+  const { data: ingredients } = useQuery({
+    queryKey: ["userIngredients"],
+    queryFn: getUserIngredients,
+  });
+
+  const queryClient = useQueryClient();
+
+  // 재료 추가 mutation
+  const addMutation = useMutation({
+    mutationFn: addUserIngredients,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["userIngredients"]);
+    },
+  });
+
+  // 재료 삭제 mutation
+  const deleteMutation = useMutation({
+    mutationFn: deleteUserIngredients,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userIngredients"] });
+    },
+  });
+
+  // 개별 재료 활성화/비활성화 토글
+  const toggleActive = (id, name) => {
+    setActiveIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+    setActiveNames((prev) =>
+      prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]
+    );
+  };
+
+  // 재료 추가 핸들러 (외부에서 값 전달)
+  // value: 문자열(예: '당근,마늘') 또는 문자열 배열
+  const handleAdd = (value) => {
+    if (!value) return { success: false, message: "입력값이 없습니다." };
+    const ingredientNames = Array.isArray(value)
+      ? value.map((v) => String(v).trim()).filter((v) => v.length > 0)
+      : String(value)
+          .split(",")
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+
+    if (ingredientNames.length === 0) {
+      return { success: false, message: "유효한 재료 이름을 입력해주세요." };
+    }
+
+    addMutation.mutate(ingredientNames);
+    return { success: true };
+  };
+
+  // 재료 삭제 핸들러
+  const handleDelete = (ingredientId) => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    deleteMutation.mutate(ingredientId);
+  };
+
+  // 전체 활성화/비활성화 토글
+  const toggleSelectAll = () => {
+    if (!ingredients) return;
+
+    const allIds = ingredients.map((i) => i.ingredientId);
+    const allNames = ingredients.map((i) => i.name);
+
+    const isAllSelected = activeIds.length === allIds.length;
+
+    if (isAllSelected) {
+      setActiveIds([]);
+      setActiveNames([]);
+    } else {
+      setActiveIds(allIds);
+      setActiveNames(allNames);
+    }
+  };
+
+  return {
+    ingredients,
+    toggleActive,
+    handleAdd,
+    handleDelete,
+    toggleSelectAll,
+    isAddLoading: addMutation.isPending,
+    isDeleteLoading: deleteMutation.isPending,
+  };
+}
